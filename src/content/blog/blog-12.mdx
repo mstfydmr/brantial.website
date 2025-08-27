@@ -1,0 +1,478 @@
+---
+title: 'Implementing Multilingual Content with Scalar'
+description: "A comprehensive guide to building truly global websites with Scalar's localization features and best practices."
+date: '2025-02-28'
+authors:
+  - name: 'Fedir Davydov'
+    image: '/images/blog/authors/fedir-davydov.webp'
+  - name: 'Rob Austin'
+    image: '/images/blog/authors/robert-austin.webp'
+tags: ['Guides']
+---
+
+## Implementing Multilingual Content with Scalar
+
+![A world map with connecting lines between different language nodes showing Scalar's multilingual capabilities](/images/blog/blog-12.webp)
+
+A comprehensive guide to building truly global websites with Scalar's localization features and best practices.
+
+## The Challenge of Global Content
+
+Building a truly global digital presence isn't just about translating words—it's about crafting experiences that feel native to each locale. This includes:
+
+- Language translation (including RTL languages)
+- Cultural adaptation of imagery and examples
+- Region-specific content and features
+- Localized dates, currencies, and measurements
+- Market-specific regulatory compliance
+
+Many content management systems treat localization as an afterthought, making multilingual implementations complex and fragile. Scalar, however, was designed with global content in mind from day one.
+
+## Scalar's Approach to Localization
+
+Scalar implements localization following these core principles:
+
+1. **Locale as a first-class concept:** Locales aren't bolted on—they're a fundamental part of the content model
+2. **Default locale with overrides:** Start with a default locale and override only what changes
+3. **Granular localization:** Localize at the field level, not just the entity level
+4. **Translation workflows:** Built-in tools for managing translation processes
+5. **Developer ergonomics:** Simple APIs that make implementation straightforward
+
+Let's explore how these principles translate into practice.
+
+## Setting Up Your Localization Strategy
+
+### Configuring Supported Locales
+
+Start by defining which locales your application will support:
+
+```typescript
+// scalar.config.ts
+export default defineConfig({
+  localization: {
+    defaultLocale: 'en-US',
+    supportedLocales: [
+      {
+        code: 'en-US',
+        name: 'English (US)',
+        direction: 'ltr',
+      },
+      {
+        code: 'fr-FR',
+        name: 'Français',
+        direction: 'ltr',
+      },
+      {
+        code: 'ar-AE',
+        name: 'العربية',
+        direction: 'rtl',
+      },
+      // Add more locales as needed
+    ],
+  },
+});
+```
+
+### Locale Fallback Chains
+
+For incomplete translations, Scalar provides fallback chains:
+
+```typescript
+// scalar.config.ts
+export default defineConfig({
+  localization: {
+    // ... other config
+    fallbacks: {
+      'fr-CA': ['fr-FR', 'en-US'],
+      'es-MX': ['es-ES', 'en-US'],
+      'pt-BR': ['pt-PT', 'en-US'],
+    },
+  },
+});
+```
+
+This means if content isn't available in Canadian French (fr-CA), Scalar will try European French (fr-FR), then fall back to US English.
+
+## Content Modeling for Localization
+
+### Field-Level Localization
+
+In your content models, specify which fields should be localized:
+
+```typescript
+// content-models.ts
+export const Product = defineType({
+  name: 'product',
+  fields: {
+    // Localized fields
+    name: fields.text({
+      localized: true,
+      required: true,
+    }),
+    description: fields.richText({
+      localized: true,
+    }),
+    marketingCopy: fields.richText({
+      localized: true,
+    }),
+
+    // Non-localized fields (shared across all locales)
+    sku: fields.text({
+      localized: false,
+      required: true,
+    }),
+    price: fields.number({
+      localized: false,
+      required: true,
+    }),
+    images: fields.array({
+      of: fields.image(),
+      localized: false,
+    }),
+  },
+});
+```
+
+### Handling Locale-Specific Content
+
+Sometimes, certain content should only exist in specific locales. Scalar handles this with conditional fields:
+
+```typescript
+export const Product = defineType({
+  // ... other fields
+  fields: {
+    // ... other fields
+
+    // EU-specific regulatory information
+    euCompliance: fields
+      .object({
+        ceMarking: fields.boolean(),
+        euEnergyLabel: fields.image(),
+        wasteDisposalInfo: fields.text(),
+      })
+      .when({
+        condition: (_, { locale }) =>
+          ['de-DE', 'fr-FR', 'it-IT', 'es-ES'].includes(locale),
+        otherwise: fields.hidden(),
+      }),
+
+    // US-specific regulatory information
+    usCompliance: fields
+      .object({
+        fccId: fields.text(),
+        californiaProposition65: fields.boolean(),
+      })
+      .when({
+        condition: (_, { locale }) => locale === 'en-US',
+        otherwise: fields.hidden(),
+      }),
+  },
+});
+```
+
+## Creating and Managing Localized Content
+
+### The Content Creator Experience
+
+Scalar's admin interface provides a seamless localization experience:
+
+1. **Locale Switcher:** Quickly toggle between locales
+2. **Visual Differentiation:** Clear highlighting of untranslated content
+3. **Side-by-Side Editing:** Compare translations while editing
+4. **Batch Translation:** Apply translations to multiple items simultaneously
+
+### Translation Workflows
+
+For teams managing translations at scale, Scalar includes workflow tools:
+
+```typescript
+// Configure translation workflows
+export default defineConfig({
+  localization: {
+    // ... other configs
+    workflows: {
+      enabled: true,
+      requiredApprovals: 1,
+      notificationRecipients: ['translations@example.com'],
+    },
+  },
+});
+```
+
+This enables a structured workflow where:
+
+1. Content is created in the primary locale
+2. Translation tasks are assigned to team members or external vendors
+3. Translations are submitted for review
+4. Approved translations are published
+
+### Translation Services Integration
+
+For automated translations, Scalar integrates with popular services:
+
+```typescript
+export default defineConfig({
+  localization: {
+    // ... other configs
+    translationServices: {
+      provider: 'deepl',
+      apiKey: process.env.DEEPL_API_KEY,
+      defaultQuality: 'standard',
+      allowedFieldTypes: ['text', 'richText'],
+    },
+  },
+});
+```
+
+While machine translation is never perfect, it can provide a useful starting point for human refinement.
+
+## Building the Frontend Experience
+
+### Fetching Localized Content
+
+When fetching content, specify the desired locale:
+
+#### REST API
+
+```typescript
+// Fetch in a specific locale
+const response = await fetch('/api/products?locale=fr-FR');
+const products = await response.json();
+
+// Or with the Scalar client
+import { createClient } from '@scalar/client';
+
+const client = createClient({
+  projectId: 'your-project-id',
+});
+
+const products = await client.getCollection('products').getMany({
+  locale: 'fr-FR',
+  // Other query parameters...
+});
+```
+
+#### GraphQL API
+
+```graphql
+query GetProducts($locale: String!) {
+  products(locale: $locale) {
+    id
+    name
+    description
+    price
+  }
+}
+```
+
+```typescript
+const { data } = await client.query(GET_PRODUCTS, {
+  variables: { locale: 'fr-FR' },
+});
+```
+
+### Dynamic Locale Switching
+
+For applications that allow users to switch languages on the client side:
+
+```tsx
+import { useLocale } from '@scalar/react-hooks';
+
+function LocaleSwitcher() {
+  const { locale, setLocale, supportedLocales } = useLocale();
+
+  return (
+    <select value={locale} onChange={(e) => setLocale(e.target.value)}>
+      {supportedLocales.map((loc) => (
+        <option key={loc.code} value={loc.code}>
+          {loc.name}
+        </option>
+      ))}
+    </select>
+  );
+}
+```
+
+This will automatically refetch content in the new locale.
+
+### Handling Direction Changes
+
+For RTL language support, ensure your UI adapts appropriately:
+
+```tsx
+import { useLocale } from '@scalar/react-hooks';
+
+function Layout({ children }) {
+  const { direction } = useLocale();
+
+  return (
+    <div dir={direction} className={`layout ${direction}`}>
+      {children}
+    </div>
+  );
+}
+```
+
+Combine this with CSS logical properties for optimal support:
+
+```css
+.container {
+  padding-inline-start: 1rem;
+  padding-inline-end: 2rem;
+  margin-inline-start: auto;
+  margin-inline-end: auto;
+  text-align: start;
+}
+```
+
+## URL Strategies for Multilingual Sites
+
+Scalar supports all common URL patterns for multilingual sites:
+
+### 1. Subdirectory Approach
+
+Example: `example.com/fr/products`
+
+```typescript
+// Next.js example with Scalar
+export async function getStaticPaths() {
+  const locales = ['en', 'fr', 'de', 'es'];
+  const slugs = await getProductSlugs();
+
+  const paths = locales.flatMap((locale) =>
+    slugs.map((slug) => ({
+      params: { slug },
+      locale,
+    })),
+  );
+
+  return { paths, fallback: 'blocking' };
+}
+
+export async function getStaticProps({ params, locale }) {
+  const product = await getProduct(params.slug, locale);
+  return { props: { product } };
+}
+```
+
+### 2. Subdomain Approach
+
+Example: `fr.example.com/products`
+
+This requires DNS configuration and server routing, but Scalar's API works the same way—just pass the locale parameter based on the subdomain.
+
+### 3. Country-Specific Domains
+
+Example: `example.fr` vs `example.de`
+
+Similar to the subdomain approach, but with separate domains for each locale.
+
+## Best Practices for Multilingual Content
+
+### 1. Start with Content Strategy
+
+Before implementing, define your localization strategy:
+
+- Which markets are priorities?
+- Will all content be translated, or just key pages?
+- How will you handle market-specific content?
+- Who will manage translations?
+- What is your quality assurance process?
+
+### 2. Design with Localization in Mind
+
+- Allow space for text expansion (German and Finnish, for example, often require more space than English)
+- Use culture-neutral imagery where possible
+- Implement flexible layouts that work for both LTR and RTL
+- Consider differences in date formats, number formatting, etc.
+
+### 3. Optimize Your Translation Process
+
+- Provide context for translators
+- Use translation memory to maintain consistency
+- Create a glossary of brand terms
+- Set up automated QA checks
+
+### 4. Implement Proper SEO
+
+- Use hreflang tags to indicate language relations
+- Ensure proper metadata in each language
+- Create locale-specific sitemaps
+
+```typescript
+// Example hreflang implementation
+export function ProductPage({ product, alternateLocales }) {
+  return (
+    <>
+      <Head>
+        <title>{product.title}</title>
+        {alternateLocales.map(alt => (
+          <link
+            key={alt.locale}
+            rel="alternate"
+            hreflang={alt.locale}
+            href={alt.url}
+          />
+        ))}
+      </Head>
+      {/* Page content */}
+    </>
+  );
+}
+```
+
+### 5. Monitor and Improve
+
+- Track user engagement across locales
+- Identify content that performs differently by region
+- Continuously refine your translation quality
+- Gather feedback from regional users
+
+## Case Study: Global E-commerce Site
+
+Let's look at how one Scalar customer implemented a multilingual e-commerce site supporting 12 languages and 18 locales:
+
+### Challenge
+
+They needed to localize:
+
+- Product information
+- Marketing content
+- Regional pricing and availability
+- Legal documentation
+- Customer support resources
+
+### Solution
+
+1. **Content Modeling:**
+
+   - Core product data stored in a single source of truth
+   - Localized fields for marketing copy, product names, and descriptions
+   - Regional variants for pricing, availability, and shipping
+
+2. **Workflow:**
+
+   - Primary content created in English
+   - Automated machine translation for initial drafts
+   - Regional teams review and refine translations
+   - Legal team approves regulated content
+
+3. **Technical Implementation:**
+   - Subdirectory URL strategy (`example.com/fr-fr/products`)
+   - Server-side rendering with locale detection
+   - CDN configuration for region-specific edge caching
+   - Separate search indexes for each locale
+
+### Results
+
+- 40% increase in conversion rates in non-English markets
+- 65% faster time-to-publish for new products globally
+- 30% reduction in translation costs
+
+## Conclusion
+
+Building truly global digital experiences is challenging, but Scalar's built-in localization features make it significantly more manageable. By treating localization as a core concern rather than an afterthought, Scalar enables teams to create authentic experiences for users worldwide.
+
+Whether you're localizing a small site into a handful of languages or managing a complex global enterprise, the principles and practices outlined in this guide will help you implement a robust, scalable localization strategy.
+
+For more detailed documentation and examples, visit our [localization guide](https://docs.scalar.dev/guides/localization) or join our [community Discord](https://discord.gg/scalar) to discuss your specific implementation.

@@ -1,0 +1,279 @@
+---
+title: "How we built Scalar's visual model editor"
+description: "Go behind the scenes with our product team on building Scalar's drag-and-drop schema editor - and what's coming next."
+date: '2025-03-16'
+authors:
+  [{ name: 'Fedir Davydov', image: '/images/blog/authors/fedir-davydov.webp' }]
+tags: ['Product']
+coverImage: '/images/blog/blog-8.webp'
+---
+
+## How we built Scalar's visual model editor
+
+Go behind the scenes with our product team on building Scalar's drag-and-drop schema editor - and what's coming next.
+
+## The Challenge of Content Modeling
+
+When we started building Scalar, we identified a critical pain point in the content management space: content modeling tools were either too technical or too simplistic. Developers wanted precision and control, while content teams needed intuitive interfaces. Both needed to collaborate effectively.
+
+We challenged ourselves to build a visual content modeling interface that would:
+
+1. Be approachable enough for non-technical users
+2. Offer the depth and flexibility developers expect
+3. Support complex content relationships and structures
+4. Generate production-ready schemas without compromise
+
+This post details our journey building Scalar's visual model editor, the technical challenges we faced, and what we learned along the way.
+
+## Starting with User Research
+
+Before writing a single line of code, we conducted extensive user research with both developers and content creators. A few key insights emerged:
+
+- Developers appreciated visual tools but distrusted them if they couldn't see or control the underlying code
+- Content teams often felt excluded from modeling decisions, despite having the best understanding of content needs
+- Both groups valued being able to quickly iterate on content structures
+- Everyone disliked unpleasant surprises when models were deployed to production
+
+These insights formed our core design principles: transparency, collaboration, and precision.
+
+## The Technical Approach
+
+### Architecture Decisions
+
+We knew from the start we needed a robust, real-time system with a clear separation of concerns:
+
+```
+┌─────────────────┐      ┌────────────────┐      ┌────────────────┐
+│                 │      │                │      │                │
+│  Visual Editor  │◄────►│  Schema Store  │◄────►│   Code Layer   │
+│                 │      │                │      │                │
+└─────────────────┘      └────────────────┘      └────────────────┘
+        ▲                        ▲                       ▲
+        │                        │                       │
+        └────────────────────────┼───────────────────────┘
+                                 │
+                         ┌───────▼───────┐
+                         │               │
+                         │ Persistence & │
+                         │    Sync       │
+                         │               │
+                         └───────────────┘
+```
+
+This architecture ensured changes in the visual editor would instantly reflect in the code layer and vice versa.
+
+### Technology Stack
+
+Our technology choices focused on performance and developer experience:
+
+- **Frontend**: React with TypeScript for type safety
+- **State Management**: A custom Redux-inspired store with middleware
+- **Schema Validation**: JSON Schema with custom extensions
+- **Real-time Synchronization**: WebSockets with conflict resolution
+- **Code Generation**: Abstract syntax tree manipulation
+
+### The Canvas Interface
+
+The heart of our editor is the canvas interface. We needed to balance flexibility with guidance, which led to several key features:
+
+1. **Drag-and-drop field creation** - Simple yet powerful
+2. **Visual relationship mapping** - Connecting content types intuitively
+3. **Nested field structures** - Supporting complex data hierarchies
+4. **Real-time validation** - Catching errors before they become problems
+5. **Instant previews** - Showing how content would look in the editing interface
+
+## Technical Challenges
+
+Building the editor presented several non-trivial challenges:
+
+### Challenge 1: Schema Synchronization
+
+Keep the visual representation and code representation in perfect sync proved complex. Our solution:
+
+```typescript
+// Simplified synchronization middleware
+const synchronizationMiddleware = (store) => (next) => (action) => {
+  const prevState = store.getState();
+  const result = next(action);
+  const nextState = store.getState();
+
+  if (action.source === 'visual-editor') {
+    // Update code representation
+    const generatedCode = generateCodeFromSchema(nextState.schema);
+    if (generatedCode !== prevState.codeRepresentation) {
+      store.dispatch({
+        type: 'UPDATE_CODE_REPRESENTATION',
+        payload: generatedCode,
+        source: 'synchronization',
+      });
+    }
+  } else if (action.source === 'code-editor') {
+    // Update visual representation
+    const parsedSchema = parseCodeToSchema(nextState.codeRepresentation);
+    if (!isEquivalent(parsedSchema, prevState.schema)) {
+      store.dispatch({
+        type: 'UPDATE_SCHEMA',
+        payload: parsedSchema,
+        source: 'synchronization',
+      });
+    }
+  }
+
+  return result;
+};
+```
+
+### Challenge 2: Relationship Visualization
+
+Representing complex relationships visually required careful design:
+
+```typescript
+// Relationship rendering logic (simplified)
+function renderRelationship(relationship, viewportState) {
+  const { source, target, type } = relationship;
+  const sourcePosition = getNodePosition(source, viewportState);
+  const targetPosition = getNodePosition(target, viewportState);
+
+  // Calculate control points for curved lines
+  const controlPoints = calculateBezierControlPoints(
+    sourcePosition,
+    targetPosition,
+    type
+  );
+
+  return (
+    <svg className="relationship-line">
+      <path
+        d={generatePathData(sourcePosition, targetPosition, controlPoints)}
+        className={`relationship-type-${type}`}
+      />
+      {/* Render relationship labels and interaction controls */}
+      <RelationshipLabels
+        source={source}
+        target={target}
+        type={type}
+        controlPoints={controlPoints}
+      />
+    </svg>
+  );
+}
+```
+
+### Challenge 3: Undo/Redo with Branching History
+
+Supporting a robust undo/redo system with branching history proved essential for experimentation:
+
+```typescript
+// Action history management
+class ActionHistory {
+  constructor() {
+    this.past = [];
+    this.future = [];
+    this.branches = new Map();
+    this.currentBranch = null;
+  }
+
+  recordAction(action, resultingState) {
+    // Truncate future if we're in the middle of history
+    if (this.future.length > 0) {
+      // Save as potential branch before truncating
+      this.saveBranch();
+      this.future = [];
+    }
+
+    this.past.push({ action, state: deepClone(resultingState) });
+  }
+
+  undo() {
+    if (this.past.length <= 1) return null; // Keep initial state
+
+    const current = this.past.pop();
+    this.future.unshift(current);
+
+    return this.past[this.past.length - 1].state;
+  }
+
+  redo() {
+    if (this.future.length === 0) return null;
+
+    const next = this.future.shift();
+    this.past.push(next);
+
+    return next.state;
+  }
+
+  // Branch management methods...
+}
+```
+
+## User Experience Considerations
+
+Technical implementation was only half the battle. Creating an intuitive user experience required careful attention to several aspects:
+
+### Progressive Disclosure
+
+Not all users need to see all options at once. We implemented progressive disclosure to reduce cognitive load:
+
+1. Basic field properties visible by default
+2. Advanced options accessible through expandable sections
+3. Developer-focused features available but not intrusive
+
+### Real-time Collaboration
+
+Multiple team members often work on content models simultaneously. Our collaboration features include:
+
+- Live cursor positions
+- User presence indicators
+- Action attribution
+- Conflict resolution with smart merging
+- Change history with author information
+
+### Documentation Integration
+
+We integrated contextual documentation directly into the editor:
+
+- Field type explanations
+- Best practice suggestions
+- Schema validation warnings
+- Performance impact notes
+
+## What's Coming Next
+
+The current visual model editor is just the beginning. Our roadmap includes:
+
+### 1. AI-assisted modeling
+
+- Suggestion of field types based on names
+- Schema generation from natural language descriptions
+- Automatic detection of common patterns
+- Optimization recommendations
+
+### 2. Advanced visualization options
+
+- Alternative layout algorithms
+- Custom themes and visual styles
+- Expanded relationship visualization
+- Filtered views for complex models
+
+### 3. Enhanced collaboration
+
+- Comment threads on specific model elements
+- Approval workflows for schema changes
+- Role-based access controls
+- Contextual communication tools
+
+## Lessons Learned
+
+Building Scalar's visual model editor taught us valuable lessons about balancing technical precision with usability:
+
+1. **Start with clear constraints** - Defining the boundaries of what the editor should do helped focus our efforts
+2. **Invest in real-time capabilities** - The instant feedback loop between visual and code representations was worth the implementation complexity
+3. **Test with real-world models** - Our initial assumptions about typical model complexity were challenged by user testing
+4. **Prioritize developer trust** - Power users need to see and control the underlying implementation
+5. **Design for evolving schemas** - Content models change over time, and the editing experience needs to support that evolution
+
+## Conclusion
+
+Creating an intuitive yet powerful visual content modeling tool required solving complex technical challenges and thoughtful UX design. The result is a flexible editor that bridges the gap between technical and non-technical users, enabling teams to collaborate on content models effectively.
+
+We're continuously refining the editor based on user feedback, and we're excited about the roadmap ahead. If you have ideas or suggestions for our visual model editor, we'd love to hear from you!

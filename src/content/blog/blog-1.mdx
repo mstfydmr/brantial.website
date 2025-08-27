@@ -1,0 +1,97 @@
+---
+title: 'Code-first content modeling'
+description: 'Explore the advantages of code-first schemas and how Scalar brings structure and flexibility to your stack.'
+date: '2025-04-11'
+authors:
+  [{ name: 'Rob Austin', image: '/images/blog/authors/robert-austin.webp' }]
+tags: ['Product']
+coverImage: '/images/blog/blog-1.webp'
+---
+
+## Code-first content modeling
+
+Explore the advantages of code-first schemas and how Scalar brings structure and flexibility to your stack.
+
+## Introduction
+
+In the rapidly evolving landscape of content management, the code-first approach has emerged as a powerful paradigm for defining and managing content structures. Unlike traditional UI-based schema editors, code-first modeling puts developers in their comfort zone - working directly with code to define content models.
+
+## What is Code-First Content Modeling?
+
+Code-first content modeling is an approach where content schemas are defined in code rather than through graphical user interfaces. This approach offers several advantages:
+
+- **Version control integration** - Your content models live alongside your application code
+- **Type safety** - Strong typing ensures consistency across your content
+- **Developer workflow** - Use familiar tools and processes for schema changes
+- **Reduced context switching** - Stay in your code editor rather than jumping between interfaces
+
+## How Scalar Implements the Code-First Approach
+
+Scalar's approach to code-first content modeling emphasizes:
+
+### 1. Type Definitions as Schema
+
+```typescript
+type Author = {
+  name: string;
+  image: Media;
+  bio: RichText;
+};
+
+type BlogPost = {
+  title: string;
+  slug: string;
+  publishDate: Date;
+  author: Reference<Author>;
+  content: RichText;
+  tags: string[];
+};
+```
+
+### 2. Automatic API Generation
+
+From your type definitions, Scalar automatically generates:
+
+- GraphQL API endpoints
+- REST API endpoints
+- Admin UI forms
+- Validation logic
+
+### 3. Schema Evolution
+
+As your application evolves, your content models can evolve with it:
+
+- Add new fields without breaking existing content
+- Migrate data between schema versions
+- Deploy schema changes alongside code changes
+
+![Code-first content modeling illustration showing type definitions and schema generation](/images/blog/blog-1.webp)
+
+## Benefits for Different Teams
+
+### For Developers
+
+- Work in familiar environments
+- Maintain consistency through type safety
+- Test schema changes with standard tools
+- Generate documentation automatically
+
+### For Content Teams
+
+- Structured content enforces quality standards
+- Predictable content models enable automation
+- Powerful querying capabilities
+- Reduced dependency on development for content structure changes
+
+## Getting Started with Code-First Modeling
+
+To start implementing code-first content modeling with Scalar:
+
+1. Define your content types in TypeScript
+2. Import the Scalar SDK
+3. Register your models
+4. Auto-generate your content API
+
+## Conclusion
+
+Code-first content modeling represents the natural evolution of content management for development teams. By bringing content modeling into the developer workflow, Scalar enables more robust, type-safe, and maintainable content structures that can evolve alongside your application.

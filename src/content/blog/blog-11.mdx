@@ -1,0 +1,415 @@
+---
+title: 'Serverless Deployment for Scalar Applications'
+description: 'Learn how to deploy your Scalar CMS to serverless environments for better scaling, cost efficiency, and simplified management.'
+date: '2025-03-03'
+authors:
+  [
+    {
+      name: 'Yassine Zaanouni',
+      image: '/images/blog/authors/yassine-zaanouni.webp',
+    },
+  ]
+tags: ['Guides']
+coverImage: '/images/blog/blog-11.webp'
+---
+
+## Serverless Deployment for Scalar Applications
+
+Learn how to deploy your Scalar CMS to serverless environments for better scaling, cost efficiency, and simplified management.
+
+## Why Serverless Makes Sense for Content Management
+
+The serverless paradigm has transformed how we build and deploy applications. For content management systems like Scalar, serverless architectures offer particularly compelling benefits:
+
+- **Cost efficiency:** Pay only for the resources you actually use
+- **Auto-scaling:** Handle traffic spikes without manual intervention
+- **Reduced maintenance:** No server management or patching
+- **Global distribution:** Deploy close to your users worldwide
+- **High availability:** Built-in redundancy and fault tolerance
+
+In this guide, we'll walk through deploying a Scalar application to popular serverless platforms, examining the specific configuration needed for optimal performance.
+
+## Preparing Your Scalar Application for Serverless
+
+Before deploying to a serverless environment, ensure your Scalar application follows these best practices:
+
+### 1. Stateless Operation
+
+Serverless functions should be stateless, with any state stored in external services:
+
+```typescript
+// Good: Using external state management
+import { createClient } from '@scalar/client';
+
+export const handler = async (event) => {
+  const client = createClient({
+    projectId: process.env.SCALAR_PROJECT_ID,
+    // State is managed in the external service
+  });
+
+  // Process request...
+};
+```
+
+### 2. Environment Configuration
+
+Store all configuration in environment variables:
+
+```bash
+# .env.production example
+SCALAR_DATABASE_URL=postgresql://user:password@host:port/database
+SCALAR_STORAGE_PROVIDER=s3
+SCALAR_STORAGE_BUCKET=my-content-bucket
+SCALAR_API_KEY=sk_prod_xxxxxxxxxxxx
+```
+
+### 3. Optimized Cold Starts
+
+Minimize dependencies and leverage connection pooling to reduce cold start times:
+
+```typescript
+// Database connection with connection pooling
+import { Pool } from 'pg';
+
+// Create the pool once, outside the handler
+const pool = new Pool({
+  connectionString: process.env.SCALAR_DATABASE_URL,
+  max: 1, // Limit connections in serverless environments
+});
+
+export const handler = async (event) => {
+  // Reuse the pool connection
+  const client = await pool.connect();
+  try {
+    // Process request...
+  } finally {
+    client.release();
+  }
+};
+```
+
+### 4. Asset Handling
+
+Configure asset storage to use cloud-native solutions:
+
+```typescript
+// scalar.config.ts
+export default defineConfig({
+  storage: {
+    provider: 'cloud',
+    options: {
+      // Use environment variables for configuration
+      provider: process.env.SCALAR_STORAGE_PROVIDER,
+      bucket: process.env.SCALAR_STORAGE_BUCKET,
+      region: process.env.SCALAR_STORAGE_REGION,
+    },
+  },
+});
+```
+
+## Deploying to AWS Lambda
+
+AWS Lambda is one of the most popular serverless platforms. Here's how to deploy Scalar:
+
+### Setting Up Infrastructure
+
+We recommend using AWS CDK or CloudFormation to define your infrastructure as code:
+
+```typescript
+// Example AWS CDK stack
+import * as cdk from 'aws-cdk-lib';
+import * as lambda from 'aws-cdk-lib/aws-lambda';
+import * as apigateway from 'aws-cdk-lib/aws-apigateway';
+
+export class ScalarServerlessStack extends cdk.Stack {
+  constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
+    super(scope, id, props);
+
+    // Create Lambda function for Scalar API
+    const scalarFunction = new lambda.Function(this, 'ScalarAPIFunction', {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      handler: 'dist/serverless.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, '../')),
+      memorySize: 1024,
+      timeout: cdk.Duration.seconds(30),
+      environment: {
+        SCALAR_DATABASE_URL: process.env.SCALAR_DATABASE_URL!,
+        SCALAR_STORAGE_PROVIDER: 's3',
+        SCALAR_STORAGE_BUCKET: scalarBucket.bucketName,
+        // Other environment variables...
+      },
+    });
+
+    // Create API Gateway
+    const api = new apigateway.RestApi(this, 'ScalarAPI', {
+      deployOptions: {
+        stageName: 'prod',
+      },
+    });
+
+    // Set up proxy integration
+    const scalarIntegration = new apigateway.LambdaIntegration(scalarFunction);
+    api.root.addProxy({
+      defaultIntegration: scalarIntegration,
+    });
+  }
+}
+```
+
+### Optimizing for Lambda
+
+To improve performance on Lambda:
+
+1. **Increase memory allocation:** This also increases CPU allocation, improving performance
+2. **Enable provisioned concurrency:** Eliminates cold starts for critical endpoints
+3. **Configure proper timeouts:** Set API Gateway and Lambda timeouts appropriately
+4. **Use RDS Proxy:** If using RDS, connect through RDS Proxy to manage database connections
+
+## Deploying to Vercel
+
+Vercel provides a streamlined deployment experience that works well with Scalar:
+
+### Project Configuration
+
+Create a `vercel.json` configuration file:
+
+```json
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/serverless.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "api/serverless.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/api/serverless.js"
+    }
+  ]
+}
+```
+
+### Database Configuration
+
+For optimal performance on Vercel:
+
+1. **Use edge-compatible databases:** Like Neon, PlanetScale, or Supabase
+2. **Configure connection pooling:** To handle concurrent serverless invocations
+3. **Set proper connection limits:** To avoid exhausting connection pools
+
+```typescript
+// api/serverless.js
+import { createServerAdapter } from '@scalar/adapter-vercel';
+import { createApp } from '../src/app';
+
+const app = createApp();
+const adapter = createServerAdapter(app, {
+  poolConnections: true,
+  maxPoolConnections: 10,
+});
+
+export default adapter;
+```
+
+## Deploying to Cloudflare Workers
+
+Cloudflare Workers provides a global, low-latency serverless platform ideal for content-heavy applications:
+
+### Scalar Configuration
+
+Create a `wrangler.toml` file:
+
+```toml
+name = "scalar-cms"
+type = "javascript"
+account_id = "your-account-id"
+workers_dev = true
+compatibility_date = "2023-01-01"
+
+[build]
+command = "npm run build:worker"
+[build.upload]
+format = "service-worker"
+
+[env.production]
+route = "cms.yourdomain.com/*"
+```
+
+### Edge-Optimized Adapter
+
+Use Scalar's Cloudflare adapter for optimal performance:
+
+```typescript
+// worker.js
+import { createServerAdapter } from '@scalar/adapter-cloudflare';
+import { createApp } from './app';
+
+export default {
+  async fetch(request, env, ctx) {
+    const app = createApp({
+      database: {
+        type: 'cloudflare-d1',
+        binding: env.SCALAR_DB,
+      },
+      storage: {
+        type: 'cloudflare-r2',
+        binding: env.SCALAR_ASSETS,
+      },
+    });
+
+    const adapter = createServerAdapter(app);
+    return adapter.fetch(request, env, ctx);
+  },
+};
+```
+
+### Cloudflare-Native Storage
+
+For optimal performance, use Cloudflare D1 and R2:
+
+```typescript
+// Migrations using Scalar's D1 adapter
+export default defineScalarConfig({
+  database: {
+    adapter: 'd1',
+    options: {
+      binding: 'SCALAR_DB',
+    },
+  },
+  storage: {
+    adapter: 'r2',
+    options: {
+      binding: 'SCALAR_ASSETS',
+      publicUrl: 'https://assets.yourdomain.com',
+    },
+  },
+});
+```
+
+## Performance Optimization Tips
+
+Regardless of your serverless platform, these optimization tips apply:
+
+### 1. Database Connection Management
+
+Database connections are precious in serverless environments:
+
+- Use connection pooling with appropriate limits
+- Keep connections alive between invocations when possible
+- Consider serverless-friendly databases like Aurora Serverless
+
+### 2. Caching Strategy
+
+Implement multi-level caching:
+
+- **CDN caching:** For public content
+- **Edge caching:** For authenticated but non-personalized content
+- **Application caching:** For frequently accessed data
+- **Database query caching:** For expensive computations
+
+```typescript
+// Example caching configuration
+export default defineScalarConfig({
+  caching: {
+    cdn: {
+      enabled: true,
+      maxAge: 3600, // 1 hour
+    },
+    edge: {
+      enabled: true,
+      maxAge: 60, // 1 minute
+    },
+    application: {
+      enabled: true,
+      ttl: 30, // 30 seconds
+    },
+  },
+});
+```
+
+### 3. Asset Optimization
+
+Optimize asset handling:
+
+- Use signed URLs for asset uploads
+- Implement on-demand image transformations
+- Enable HTTP/2 for parallel asset loading
+
+### 4. GraphQL Optimization
+
+If using Scalar's GraphQL API:
+
+- Enable persisted queries for production
+- Implement query complexity analysis
+- Use field-level permissions to restrict data access
+
+```typescript
+// GraphQL optimization configuration
+export default defineScalarConfig({
+  graphql: {
+    persistedQueries: true,
+    complexityLimit: 1000,
+    depthLimit: 7,
+    introspection: process.env.NODE_ENV !== 'production',
+  },
+});
+```
+
+## Monitoring and Debugging
+
+Properly monitoring your serverless Scalar deployment is crucial:
+
+### Key Metrics to Track
+
+- **Invocation count:** Track API usage patterns
+- **Execution duration:** Identify performance bottlenecks
+- **Error rate:** Detect issues quickly
+- **Cold start frequency:** Measure user experience impact
+- **Database connection usage:** Prevent connection exhaustion
+
+### Logging Best Practices
+
+Structure your logs for serverless environments:
+
+```typescript
+// Structured logging example
+import { createLogger } from '@scalar/logger';
+
+const logger = createLogger({
+  level: process.env.LOG_LEVEL || 'info',
+  format: 'json',
+  context: {
+    service: 'scalar-cms',
+    environment: process.env.NODE_ENV,
+  },
+});
+
+// Usage
+logger.info('Processing request', {
+  requestId: context.awsRequestId,
+  path: event.path,
+  method: event.httpMethod,
+});
+```
+
+## Cost Considerations
+
+Serverless deployments can be very cost-effective, but require attention to these factors:
+
+- **Execution time:** Optimize code to reduce execution time
+- **Memory allocation:** Balance between cost and performance
+- **Database connections:** Use serverless-compatible databases
+- **Data transfer:** Implement proper caching to reduce data movement
+- **Storage costs:** Optimize asset storage and delivery
+
+## Conclusion
+
+Deploying Scalar to serverless environments provides numerous benefits, from cost optimization to simplified management. By following the platform-specific guidelines and general best practices outlined in this guide, you can ensure your Scalar CMS performs optimally in production.
+
+For more detailed deployment instructions, including platform-specific tutorials, check our [deployment documentation](https://docs.scalar.com/deployment). If you have specific questions or need assistance, join our [Discord community](https://discord.gg/scalar) where our team and community members can help you troubleshoot your serverless deployment.

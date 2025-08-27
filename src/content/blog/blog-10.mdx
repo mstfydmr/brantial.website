@@ -1,0 +1,277 @@
+---
+title: 'Designing a CMS developers actually want to use'
+description: 'A deep dive into our design philosophy at Scalar - from intuitive APIs to a clean UI that feels like part of your stack.'
+date: '2025-03-07'
+authors:
+  [
+    { name: 'Rob Austin', image: '/images/blog/authors/robert-austin.webp' },
+    { name: 'Fedir Davydov', image: '/images/blog/authors/fedir-davydov.webp' },
+  ]
+tags: ['Community']
+---
+
+## Designing a CMS developers actually want to use
+
+![Scalar CMS interface showing a clean design focused on developer experience](/images/blog/blog-10.webp)
+
+A deep dive into our design philosophy at Scalar - from intuitive APIs to a clean UI that feels like part of your stack.
+
+## Why most CMS interfaces miss the mark
+
+We've all been there. You're building a website or application and need a content management system. You evaluate the options, pick one that seems promising, and then the frustration begins:
+
+- Overly complex admin interfaces that editors struggle to navigate
+- Developer experiences that feel like they're from another era
+- APIs that require extensive documentation to understand
+- Integration patterns that fight against your preferred stack
+- Extension systems that are either too limiting or too complex
+
+After years of experiencing these frustrations firsthand, we started to wonder: **why isn't there a CMS that developers actually want to use?**
+
+This question became the foundation of Scalar's design philosophy.
+
+## Developer experience as the north star
+
+When we started designing Scalar, we established a clear set of principles that would guide our decisions:
+
+### 1. Code-first, visual-optional
+
+Developers should be able to define content models in code using familiar patterns. Visual tools should enhance, not replace, the code experience.
+
+```typescript
+// This is how content modeling should feel
+const Author = defineType({
+  name: 'author',
+  fields: {
+    name: fields.text({ required: true }),
+    bio: fields.richText(),
+    avatar: fields.image({ aspectRatio: 1 }),
+    socialLinks: fields.object({
+      twitter: fields.url(),
+      github: fields.url(),
+      website: fields.url(),
+    }),
+  },
+});
+```
+
+### 2. Your stack, your rules
+
+A CMS should adapt to your development workflow, not the other way around. Scalar is designed to:
+
+- Work with any frontend framework
+- Support multiple data storage backends
+- Integrate with your existing auth systems
+- Deploy anywhere (serverless, containers, VMs)
+- Version control content alongside code if desired
+
+### 3. Minimal API surface
+
+APIs should be intuitive enough that you rarely need to check documentation. We obsess over naming, consistency, and predictability.
+
+```typescript
+// Our APIs aim for this level of clarity
+const posts = await scalar
+  .query('post')
+  .where({ category: 'engineering' })
+  .orderBy({ publishDate: 'desc' })
+  .limit(10)
+  .include(['author', 'relatedPosts'])
+  .exec();
+```
+
+### 4. Progressive disclosure
+
+Simple tasks should be simple. Complex tasks should be possible. We use progressive disclosure to maintain this balance:
+
+- Core APIs cover 80% of use cases with minimal complexity
+- Extension points reveal power when needed
+- Advanced features don't clutter the basic experience
+
+### 5. Performance by default
+
+Performance shouldn't be an afterthought or a premium feature. Scalar is built for speed from the ground up:
+
+- Optimized query execution
+- Efficient caching at multiple levels
+- Assets optimized automatically
+- Server and client performance monitoring
+
+## Understanding developer pain points
+
+To create a better CMS, we needed to deeply understand what frustrates developers about existing solutions. We conducted extensive research, including:
+
+- Interviews with 100+ developers across different experience levels
+- Analysis of GitHub issues in popular CMS repositories
+- Surveys of developer satisfaction with existing CMS tools
+- User testing of early Scalar prototypes
+
+Several key pain points emerged consistently:
+
+### Content modeling limitations
+
+Many CMS platforms either impose rigid structures or offer too little guidance, leading to suboptimal content models.
+
+Our solution:
+
+- Flexible type system with sensible defaults
+- Clear patterns for common modeling needs
+- Rich relationship types with referential integrity
+- Schema validation with helpful error messages
+
+### API inconsistency
+
+Developers described the cognitive load of working with inconsistent, poorly designed APIs as a major pain point.
+
+Our solution:
+
+- Consistent API patterns across all interfaces
+- Predictable naming conventions
+- Type-safe client libraries
+- Clear documentation with plenty of examples
+
+### Deployment complexity
+
+Setting up and maintaining CMS infrastructure shouldn't be a project in itself.
+
+Our solution:
+
+- Single-command deployment options
+- Infrastructure as code templates
+- Clear separation of concerns
+- Containerized architecture
+
+### Poor editor experiences
+
+Developers often have to apologize to content teams for the clunky interfaces they're forced to use.
+
+Our solution:
+
+- Clean, minimalist UI design
+- Context-aware editing experiences
+- Customizable workflows
+- Performance optimizations for editor tasks
+
+## Balancing developer and editor needs
+
+One of the most difficult challenges in CMS design is balancing the needs of developers and content editors. Too often, platforms prioritize one at the expense of the other.
+
+At Scalar, we believe this is a false dichotomy. By understanding the true needs of both groups, we can design experiences that work well for everyone.
+
+### Content modeling that serves both audiences
+
+Scalar's content modeling approach separates structure (developer concern) from presentation (editor concern):
+
+```typescript
+// Structure defined by developers
+const ProductModel = defineType({
+  name: 'product',
+  fields: {
+    name: fields.text({ required: true }),
+    price: fields.number({
+      required: true,
+      validation: { min: 0 },
+    }),
+    description: fields.richText(),
+    // ...other fields
+  },
+});
+
+// Presentation configured separately
+configureEditingExperience({
+  type: 'product',
+  groups: [
+    {
+      name: 'Basic Info',
+      fields: ['name', 'price', 'category'],
+    },
+    {
+      name: 'Details',
+      fields: ['description', 'specifications', 'images'],
+    },
+    {
+      name: 'SEO & Marketing',
+      fields: ['seoTitle', 'seoDescription', 'promoText'],
+    },
+  ],
+});
+```
+
+This separation allows:
+
+- Developers to focus on data integrity and structure
+- Editors to work in a well-organized interface
+- Both sides to collaborate on optimal workflows
+
+### Schema-driven UI
+
+Scalar automatically generates editing interfaces from your content models, but gives you control where it matters:
+
+- Field types determine appropriate input components
+- Validation rules create inline validation
+- Field metadata configures options and behaviors
+- Custom field types for specialized needs
+
+## Real-world examples
+
+Let's look at how our design philosophy translates to real-world developer experiences:
+
+### Case Study: Blog Migration
+
+A development team was migrating from a legacy CMS to Scalar. Their experience highlighted several positive outcomes:
+
+1. **Content modeling clarity**  
+   "Defining our content models in TypeScript made the structure explicit in a way our previous CMS never did. We uncovered and fixed several data inconsistencies during the migration."
+
+2. **Migration ease**  
+   "The migration CLI helped us map our old content to the new models, and the validation tools caught issues early."
+
+3. **Frontend integration**  
+   "Our React components connect directly to Scalar's hooks, which reduced the amount of data fetching code we needed to write by around 70%."
+
+4. **Editor satisfaction**  
+   "Our content team reported that the new editing experience was significantly faster and more intuitive."
+
+### Case Study: E-commerce Product Catalog
+
+An e-commerce developer shared their experience implementing a product catalog:
+
+1. **Flexible content modeling**  
+   "We needed to support products with drastically different attribute sets. Scalar's union types and conditional fields made this straightforward."
+
+2. **Performance at scale**  
+   "With over 50,000 products, query performance was a concern. Scalar's automatic indexing and query optimization kept things fast without manual tuning."
+
+3. **Custom field types**  
+   "Creating custom field types for product-specific attributes like size charts and color swatches took less than a day."
+
+4. **Integration with existing systems**  
+   "The webhook system made it easy to keep our inventory management system in sync with the CMS."
+
+## The road ahead
+
+While we've made progress on creating a CMS developers actually want to use, our work is far from complete. Our roadmap is guided by ongoing developer feedback:
+
+### Near-term improvements
+
+- Enhanced TypeScript inference for even better type safety
+- More granular permissions and role definitions
+- Expanded integrations with development tools
+- Performance improvements for extremely large datasets
+
+### Longer-term vision
+
+- AI-assisted content modeling and optimization
+- Enhanced collaboration tools for development teams
+- More powerful visual customization options
+- Community plugin marketplace
+
+## Conclusion
+
+Designing a CMS that developers actually want to use requires a deep understanding of developer workflows, pain points, and mental models. At Scalar, we've made this understanding the foundation of our design philosophy.
+
+By prioritizing code-first workflows, consistent APIs, flexible integration patterns, and performance, we're building a CMS that feels like a natural extension of your development stack rather than a separate system to fight against.
+
+We believe that when developers enjoy working with a CMS, it leads to better content models, more efficient workflows, and ultimately better experiences for content creators and end users alike.
+
+If you're a developer who's experienced the frustrations of traditional CMS platforms, we'd love to hear your perspective. What makes a CMS enjoyable (or painful) to work with? Share your thoughts in the comments below or join our Discord community to continue the conversation.
