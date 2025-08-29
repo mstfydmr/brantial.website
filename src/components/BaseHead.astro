@@ -2,7 +2,12 @@
 // Import the global.css file here so that it is included on
 // all pages through the use of the <BaseHead /> component.
 import '@/styles/global.css';
-import { SITE_TITLE, SITE_METADATA } from '../consts';
+import {
+  SITE_TITLE,
+  SITE_METADATA,
+  ORGANIZATION,
+  SOCIAL_LINKS,
+} from '../consts';
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
@@ -104,9 +109,9 @@ const imageURL = new URL(finalImage, Astro.url);
     description: SITE_METADATA.description,
     publisher: {
       '@type': 'Organization',
-      name: SITE_METADATA.publisher,
+      name: ORGANIZATION.name || SITE_METADATA.publisher,
     },
-    sameAs: ['https://www.linkedin.com/company/brantialai/'],
+    sameAs: SOCIAL_LINKS,
   })}
 />
 
@@ -116,9 +121,43 @@ const imageURL = new URL(finalImage, Astro.url);
   set:html={JSON.stringify({
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: SITE_METADATA.publisher || SITE_METADATA.title.default,
-    url: Astro.site,
-    logo: new URL(SITE_METADATA.icons.icon[1].url, Astro.site).toString(),
-    sameAs: ['https://www.linkedin.com/company/brantialai/'],
+    name:
+      ORGANIZATION.name ||
+      SITE_METADATA.publisher ||
+      SITE_METADATA.title.default,
+    legalName: ORGANIZATION.legalName,
+    url: ORGANIZATION.url || Astro.site,
+    logo: new URL(
+      ORGANIZATION.logoUrl || SITE_METADATA.icons.icon[1].url,
+      Astro.site,
+    ).toString(),
+    foundingDate: ORGANIZATION.foundingDate,
+    founder: (ORGANIZATION.founders || []).map((f) => ({
+      '@type': 'Person',
+      name: f,
+    })),
+    address: ORGANIZATION.address
+      ? {
+          '@type': 'PostalAddress',
+          streetAddress: ORGANIZATION.address.streetAddress,
+          addressLocality: ORGANIZATION.address.addressLocality,
+          addressRegion: ORGANIZATION.address.addressRegion,
+          postalCode: ORGANIZATION.address.postalCode,
+          addressCountry: ORGANIZATION.address.addressCountry,
+        }
+      : undefined,
+    contactPoint: ORGANIZATION.contact
+      ? [
+          {
+            '@type': 'ContactPoint',
+            email: ORGANIZATION.contact.email,
+            telephone: ORGANIZATION.contact.telephone,
+            contactType: ORGANIZATION.contact.contactType,
+            areaServed: ORGANIZATION.contact.areaServed,
+            availableLanguage: ORGANIZATION.contact.availableLanguage,
+          },
+        ]
+      : undefined,
+    sameAs: SOCIAL_LINKS,
   })}
 />

@@ -55,3 +55,31 @@ export const SITE_METADATA = {
 // Site-level URLs (login/signup) so components can import them from a single place
 export const SITE_LOGIN_URL = 'https://dev.brantial.com/login';
 export const SITE_SIGNUP_URL = 'https://app.brantial.com/register';
+
+// EEAT: Central organization data and social profiles
+export const ORGANIZATION = {
+  name: 'Brantial',
+  legalName: 'Webtures Ltd',
+  url: 'https://www.brantial.com',
+  logoUrl: '/layout/logo-wordmark.svg',
+  foundingDate: '2024-01-01',
+  founders: ['Brantial Team'],
+  address: {
+    streetAddress: '494a Fulham Road',
+    addressLocality: 'London',
+    addressRegion: 'England',
+    postalCode: 'SW6 5NH',
+    addressCountry: 'GB',
+  },
+  contact: {
+    email: 'hello@webtures.com',
+    telephone: '+90 216 599 04 95',
+    contactType: 'customer support',
+    areaServed: 'Worldwide',
+    availableLanguage: ['en'],
+  },
+};
+
+export const SOCIAL_LINKS: string[] = [
+  'https://www.linkedin.com/company/brantialai/',
+];

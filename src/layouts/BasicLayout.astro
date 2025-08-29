@@ -1,5 +1,6 @@
 ---
 import BaseHead from '@/components/BaseHead.astro';
+import { SITE_METADATA } from '@/consts';
 import Footer from '@/components/layout/footer';
 import Navbar from '@/components/layout/navbar';
 
@@ -21,6 +22,43 @@ const pageTitle = frontmatter?.title || title;
 <html lang="en">
   <head>
     <BaseHead title={title} description={description} />
+    <!-- WebPage + BreadcrumbList JSON-LD -->
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'WebPage',
+        name: pageTitle || SITE_METADATA.title.default,
+        url: new URL(Astro.url.pathname, Astro.site),
+        description: description || SITE_METADATA.description,
+        isPartOf: {
+          '@type': 'WebSite',
+          name: SITE_METADATA.title.default,
+          url: Astro.site,
+        },
+      })}
+    />
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Home',
+            item: new URL('/', Astro.site),
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: pageTitle || SITE_METADATA.title.default,
+            item: new URL(Astro.url.pathname, Astro.site),
+          },
+        ],
+      })}
+    />
   </head>
   <body class="antialiased">
     <Navbar currentPage={currentPage} client:load />

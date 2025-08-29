@@ -1,5 +1,5 @@
 ---
-import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+import { SITE_TITLE, SITE_DESCRIPTION, ORGANIZATION } from '../consts';
 
 import { ContactSection } from '@/components/sections/contact';
 import DefaultLayout from '@/layouts/DefaultLayout.astro';
@@ -7,4 +7,28 @@ import DefaultLayout from '@/layouts/DefaultLayout.astro';
 
 <DefaultLayout title={'Contact - ' + SITE_TITLE} description={SITE_DESCRIPTION}>
   <ContactSection client:load />
+  <script
+    type="application/ld+json"
+    set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'ContactPage',
+      name: 'Contact',
+      url: new URL(Astro.url.pathname, Astro.site),
+      mainEntity: {
+        '@type': 'Organization',
+        name: ORGANIZATION.name,
+        url: ORGANIZATION.url || Astro.site,
+        contactPoint: [
+          {
+            '@type': 'ContactPoint',
+            email: ORGANIZATION.contact.email,
+            telephone: ORGANIZATION.contact.telephone,
+            contactType: ORGANIZATION.contact.contactType,
+            areaServed: ORGANIZATION.contact.areaServed,
+            availableLanguage: ORGANIZATION.contact.availableLanguage,
+          },
+        ],
+      },
+    })}
+  />
 </DefaultLayout>
