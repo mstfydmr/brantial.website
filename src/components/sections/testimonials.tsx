@@ -38,7 +38,7 @@ const companies = [
 
 export function Testimonials() {
   return (
-    <section className="container">
+    <section className="container overflow-x-clip">
       <div className="bordered-div-padding relative border border-t-0">
         <div className="absolute top-0 left-full -mt-0.25 hidden h-[calc(100%+2px)] w-[50vw] overflow-hidden border-y md:block">
           <Meteors
@@ -77,8 +77,8 @@ export function Testimonials() {
       {/* Testimonial */}
       <blockquote className="bordered-div-padding flex flex-col justify-between gap-8 border border-t-0 md:flex-row">
         <p className="lg:text-4xxl font-weight-display flex-7 text-2xl leading-snug tracking-tighter md:text-3xl">
-          Scalar CMS changed how we ship content. It&apos;s fast, intuitive, and
-          plays perfectly with our stack.
+          Traditional SEO was failing us. Brantial’s GEO approach put us back in
+          front of customers.
         </p>
 
         <footer className="flex-6 self-end">
@@ -91,7 +91,7 @@ export function Testimonials() {
               className="rounded-full"
             />
             <cite className="text-sm font-medium not-italic md:text-lg lg:text-xl">
-              Robert Austin, Founder & Software Engineer at Zerostatic
+              CMO (Chief Marketing Officer)
             </cite>
           </div>
         </footer>

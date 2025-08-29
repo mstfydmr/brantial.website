@@ -7,18 +7,6 @@ import { EXTERNAL_LINKS } from '@/constants/external-links';
 
 const contactOptions = [
   {
-    icon: FaDiscord,
-    title: 'Discord',
-    description: 'Ask questions, share ideas, or just hang out.',
-    href: EXTERNAL_LINKS.DISCORD,
-  },
-  {
-    icon: FaGithub,
-    title: 'GitHub',
-    description: "We're always open to PRs and feature requests.",
-    href: EXTERNAL_LINKS.GITHUB,
-  },
-  {
     icon: FaXTwitter,
     title: 'Twitter/X',
     description: 'Keep up with releases and behind-the-scenes moments.',
@@ -43,11 +31,12 @@ export function ContactSection() {
           <div className="bordered-div-padding relative space-y-6 md:space-y-8 lg:space-y-10">
             <PlusSigns className="absolute inset-0 -mt-0.25 hidden !h-[calc(100%+2px)] -translate-x-full border-y md:block" />
             <h1 className="font-weight-display text-2xl leading-snug tracking-tighter md:text-3xl lg:text-5xl">
-              Talk to the Scalar team
+              Talk to the Brantial team
             </h1>
             <p className="text-muted-foreground mx-auto max-w-[700px] text-sm leading-relaxed md:text-lg lg:text-xl">
-              Whether you&apos;re a solo dev, content team, or curious
-              contributor—our community is your community.
+              Have an idea, a question, or a collaboration in mind? Reaching out
+              is not just filling out a form, it is contributing to the future
+              of our brand.
             </p>
           </div>
           {contactOptions.map((option, index) => (

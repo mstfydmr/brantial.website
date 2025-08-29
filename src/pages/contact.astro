@@ -5,6 +5,6 @@ import { ContactSection } from '@/components/sections/contact';
 import DefaultLayout from '@/layouts/DefaultLayout.astro';
 ---
 
-<DefaultLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
+<DefaultLayout title={'Contact - ' + SITE_TITLE} description={SITE_DESCRIPTION}>
   <ContactSection client:load />
 </DefaultLayout>

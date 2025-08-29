@@ -3,14 +3,14 @@
  */
 export const EXTERNAL_LINKS = {
   // Social media
-  DISCORD: 'https://www.shadcnblocks.com/',
-  GITHUB: 'https://www.shadcnblocks.com/',
-  TWITTER: 'https://www.shadcnblocks.com/',
-  LINKEDIN: 'https://www.shadcnblocks.com/',
+  DISCORD: '#',
+  GITHUB: '#',
+  TWITTER: 'https://x.com/brantialai',
+  LINKEDIN: 'https://www.linkedin.com/company/brantialai/',
 
   // Contact
-  EMAIL: 'mailto:team@scalar.com',
+  EMAIL: 'mailto:hello@brantial.com',
 
   // Open Source
-  GITHUB_REPO: 'https://www.shadcnblocks.com/',
+  GITHUB_REPO: '#',
 };

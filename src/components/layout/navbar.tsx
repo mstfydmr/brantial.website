@@ -29,6 +29,7 @@ import {
 } from '@/components/ui/navigation-menu';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { cn } from '@/lib/utils';
+import { SITE_LOGIN_URL, SITE_SIGNUP_URL } from '@/consts';
 
 type NavItem = {
   title: string;
@@ -46,71 +47,71 @@ type NavItem = {
 };
 
 const navigationItems: NavItem[] = [
-  {
-    title: 'Product',
-    subitems: [
-      {
-        title: 'CMS',
-        items: [
-          {
-            title: 'Visual Content Editor',
-            href: '/product',
-            description: 'Rich text, media, and structured field editing',
-            icon: Pencil,
-            isHighlighted: true,
-          },
-          {
-            title: 'Real-time Collaboration',
-            href: '/product',
-            description: 'Commenting, presence, autosave, versioning',
-            icon: Users,
-          },
-        ],
-      },
-      {
-        title: 'Developer Tools',
-        items: [
-          {
-            title: 'GraphQL & REST APIs',
-            href: '/product',
-            description: 'Auto-generated, blazing fast, type-safe APIs',
-            icon: Database,
-          },
-          {
-            title: 'Local Development',
-            href: '/product',
-            description: 'Run Scalar locally with npx scalar dev',
-            icon: Terminal,
-          },
-          {
-            title: 'Code-first Models',
-            href: '/product',
-            description: 'Define models in code, sync to the UI',
-            icon: Code2,
-          },
-        ],
-      },
-      {
-        title: 'Integrations',
-        items: [
-          {
-            title: 'Next.js, Astro, etc.',
-            href: '/product',
-            description: 'Plug into your favorite frameworks instantly',
-            icon: Box,
-          },
-          {
-            title: 'GitHub Sync',
-            href: '/product',
-            description: 'Backup and version content model files',
-            icon: GitBranch,
-          },
-        ],
-      },
-    ],
-  },
-  { title: 'About', href: '/about' },
-  { title: 'Roadmap', href: '/roadmap' },
+  //   {
+  //     title: 'Product',
+  //     subitems: [
+  //       {
+  //         title: 'CMS',
+  //         items: [
+  //           {
+  //             title: 'Visual Content Editor',
+  //             href: '/product',
+  //             description: 'Rich text, media, and structured field editing',
+  //             icon: Pencil,
+  //             isHighlighted: true,
+  //           },
+  //           {
+  //             title: 'Real-time Collaboration',
+  //             href: '/product',
+  //             description: 'Commenting, presence, autosave, versioning',
+  //             icon: Users,
+  //           },
+  //         ],
+  //       },
+  //       {
+  //         title: 'Developer Tools',
+  //         items: [
+  //           {
+  //             title: 'GraphQL & REST APIs',
+  //             href: '/product',
+  //             description: 'Auto-generated, blazing fast, type-safe APIs',
+  //             icon: Database,
+  //           },
+  //           {
+  //             title: 'Local Development',
+  //             href: '/product',
+  //             description: 'Run Scalar locally with npx scalar dev',
+  //             icon: Terminal,
+  //           },
+  //           {
+  //             title: 'Code-first Models',
+  //             href: '/product',
+  //             description: 'Define models in code, sync to the UI',
+  //             icon: Code2,
+  //           },
+  //         ],
+  //       },
+  //       {
+  //         title: 'Integrations',
+  //         items: [
+  //           {
+  //             title: 'Next.js, Astro, etc.',
+  //             href: '/product',
+  //             description: 'Plug into your favorite frameworks instantly',
+  //             icon: Box,
+  //           },
+  //           {
+  //             title: 'GitHub Sync',
+  //             href: '/product',
+  //             description: 'Backup and version content model files',
+  //             icon: GitBranch,
+  //           },
+  //         ],
+  //       },
+  //     ],
+  //   },
+  { title: 'Pricing', href: '#pricing' },
+  //   { title: 'Roadmap', href: '/roadmap' },
   { title: 'FAQs', href: '/faq' },
   //   { title: 'Blog', href: '/blog' },
   { title: 'Contact', href: '/contact' },
@@ -331,29 +332,23 @@ const NavBarAction = ({
 }) => {
   return (
     <div className="bordered-div-padding flex items-center justify-between border lg:border-none lg:!p-0">
-      <a href="#" className="flex items-center">
-        <Button
-          variant="ghost"
-          className="gap-2 font-medium lg:text-base"
-          size="sm"
-        >
-          <FaGithub className="size-5" />
-          <span className="">14.3k</span>
-        </Button>
-      </a>
-
       <div className="flex flex-1 items-center gap-2">
         <div className="flex flex-1 items-center justify-center">
           <ThemeToggle className="hidden lg:block" />
-          <a href="/login" onClick={() => setIsMenuOpen?.(false)}>
+          <a
+            href={SITE_LOGIN_URL}
+            target="_blank"
+            onClick={() => setIsMenuOpen?.(false)}
+          >
             <Button size="sm" variant="ghost" className="lg:text-base">
               Log In
             </Button>
           </a>
         </div>
         <a
-          href="/signup"
+          href={SITE_SIGNUP_URL}
           className="ms-3"
+          target="_blank"
           onClick={() => setIsMenuOpen?.(false)}
         >
           <Button size="sm" variant="default" className="">

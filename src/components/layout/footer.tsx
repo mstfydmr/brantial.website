@@ -1,79 +1,88 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 
-import {
-  FileCode,
-  Globe,
-  LineChart,
-  Lock,
-  Server,
-  Terminal,
-  Users,
-} from 'lucide-react';
-import { FaDiscord, FaGithub, FaLinkedin, FaXTwitter } from 'react-icons/fa6';
+import { Globe, LineChart, Tag, Terminal, Users } from 'lucide-react';
+import { FaLinkedin, FaXTwitter } from 'react-icons/fa6';
 
 import { Diamonds } from '@/components/icons/diamonds';
 import Logo from '@/components/layout/logo';
 import { Button } from '@/components/ui/button';
 import { EXTERNAL_LINKS } from '@/constants/external-links';
+import { SITE_SIGNUP_URL } from '@/consts';
 import { cn } from '@/lib/utils';
 
-const FEATURES = [
+type PlanName = 'Entry' | 'Pro' | 'Growth';
+
+type BillingPeriod = 'monthly' | 'annually';
+
+const PRICES: Record<BillingPeriod, Record<PlanName, number>> = {
+  monthly: {
+    Entry: 19,
+    Pro: 99,
+    Growth: 199,
+  },
+  annually: {
+    Entry: 16,
+    Pro: 83,
+    Growth: 166,
+  },
+};
+
+const BASE_PLANS: Array<{
+  name: PlanName;
+  features: { name: string; icon: ReactNode }[];
+  button: { text: string; href: string; className?: string };
+}> = [
   {
-    title: 'Open Source',
-    description: '0$ / forever',
+    name: 'Entry',
     features: [
+      { name: '20 prompts', icon: <Terminal className="size-5" /> },
+      { name: '10 competitors', icon: <LineChart className="size-5" /> },
+      { name: '10 tags', icon: <Tag className="size-5" /> },
+      { name: '0 team members', icon: <Users className="size-5" /> },
       {
-        name: 'Self-host on your own infrastructure',
-        icon: <Server className="size-5" />,
-      },
-      {
-        name: 'Full access to the Scalar CMS core',
-        icon: <FileCode className="size-5" />,
-      },
-      {
-        name: 'GitHub community support',
-        icon: <FaGithub className="size-5" />,
-      },
-      {
-        name: 'Ideal for developers and internal tools',
-        icon: <Terminal className="size-5" />,
+        name: 'AI Models: OpenAI, Claude, Google, Perplexity, Grok, Mistral',
+        icon: <Globe className="size-5" />,
       },
     ],
     button: {
-      text: 'View on GitHub',
-      href: EXTERNAL_LINKS.GITHUB_REPO,
-      className: 'bg-border hover:bg-border/80 text-foreground',
+      text: 'Start 7-Day Trial',
+      href: SITE_SIGNUP_URL,
+      //   className: 'bg-border hover:bg-border/80 text-foreground',
     },
   },
   {
-    title: 'Cloud',
-    description: 'From $29 / month',
+    name: 'Pro',
     features: [
+      { name: '50 prompts', icon: <Terminal className="size-5" /> },
+      { name: '50 competitors', icon: <LineChart className="size-5" /> },
+      { name: '50 tags', icon: <Tag className="size-5" /> },
+      { name: '10 team members', icon: <Users className="size-5" /> },
       {
-        name: 'Fully managed infrastructure',
-        icon: <Server className="size-5" />,
-      },
-      {
-        name: 'Realtime collaboration & autosave',
-        icon: <Users className="size-5" />,
-      },
-      {
-        name: 'Role-based access & team permissions',
-        icon: <Lock className="size-5" />,
-      },
-      {
-        name: 'Built-in CDN for media delivery',
+        name: 'AI Models: OpenAI, Claude, Google, Perplexity, Grok, Mistral',
         icon: <Globe className="size-5" />,
-      },
-      {
-        name: 'Email support & usage analytics',
-        icon: <LineChart className="size-5" />,
       },
     ],
     button: {
-      text: 'Start Free Trial',
-      href: '/signup',
+      text: 'Start 7-Day Trial',
+      href: SITE_SIGNUP_URL,
+    },
+  },
+  {
+    name: 'Growth',
+    features: [
+      { name: '200 prompts', icon: <Terminal className="size-5" /> },
+      { name: '100 competitors', icon: <LineChart className="size-5" /> },
+      { name: '200 tags', icon: <Tag className="size-5" /> },
+      { name: '50 team members', icon: <Users className="size-5" /> },
+      {
+        name: 'AI Models: OpenAI, Claude, Google, Perplexity, Grok, Mistral',
+        icon: <Globe className="size-5" />,
+      },
+    ],
+    button: {
+      text: 'Get Started',
+      href: SITE_SIGNUP_URL,
     },
   },
 ];
@@ -81,6 +90,7 @@ const FEATURES = [
 const Footer = () => {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [mounted, setMounted] = useState(false);
+  const [period, setPeriod] = useState<BillingPeriod>('annually');
 
   useEffect(() => {
     setMounted(true);
@@ -130,17 +140,63 @@ const Footer = () => {
     mounted && theme === 'dark' ? 'invert-0' : 'invert',
   );
 
+  // Build plans with dynamic prices based on selected period
+  const FEATURES = BASE_PLANS.map((plan) => ({
+    title: plan.name,
+    description:
+      period === 'annually' ? (
+        <>
+          ${PRICES[period][plan.name]}/mo •{' '}
+          <span className="text-muted-foreground text-xs">Billed Annually</span>
+        </>
+      ) : (
+        `$${PRICES[period][plan.name]}/mo`
+      ),
+    features: plan.features,
+    button: plan.button,
+  }));
+
   return (
-    <footer className={cn('overflow-hidden', themeClass)}>
+    <footer id="pricing" className={cn('overflow-hidden', themeClass)}>
       {/* Pricing Section */}
       <div className="container">
-        <div className="bordered-div-padding border-x">
+        <div className="bordered-div-padding flex flex-col items-center justify-between border-x md:flex-row">
           <h2 className="lg:text-4xxl font-weight-display mt-6 text-xl md:mt-14 md:text-3xl lg:mt-40">
             Start free. Scale confidently.
           </h2>
+          <div className="mt-10 md:mt-46">
+            <div className="flex items-center gap-1 rounded-md border p-1">
+              <button
+                type="button"
+                aria-pressed={period === 'monthly'}
+                onClick={() => setPeriod('monthly')}
+                className={cn(
+                  'rounded-md px-3 py-1.5 text-sm font-medium transition-colors',
+                  period === 'monthly'
+                    ? 'bg-secondary text-secondary-foreground'
+                    : 'hover:bg-muted/20',
+                )}
+              >
+                Monthly
+              </button>
+              <button
+                type="button"
+                aria-pressed={period === 'annually'}
+                onClick={() => setPeriod('annually')}
+                className={cn(
+                  'rounded-md px-3 py-1.5 text-sm font-medium transition-colors',
+                  period === 'annually'
+                    ? 'bg-secondary text-secondary-foreground'
+                    : 'hover:bg-muted/20',
+                )}
+              >
+                Annually
+              </button>
+            </div>
+          </div>
         </div>
 
-        <div className="grid divide-y border md:grid-cols-2 md:divide-x md:divide-y-0">
+        <div className="grid divide-y border md:grid-cols-3 md:divide-x md:divide-y-0">
           {FEATURES.map((plan, index) => (
             <div
               key={index}
@@ -202,24 +258,6 @@ const Footer = () => {
         {/* Social and Status Section */}
         <div className="flex flex-col justify-between border-x border-b md:flex-row">
           <div className="bordered-div-padding flex items-center space-x-3">
-            <a
-              href={EXTERNAL_LINKS.DISCORD}
-              className="px-3 py-2.5 transition-opacity hover:opacity-80"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Discord"
-            >
-              <FaDiscord className="size-5" />
-            </a>
-            <a
-              href={EXTERNAL_LINKS.GITHUB}
-              className="px-3 py-2.5 transition-opacity hover:opacity-80"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="GitHub"
-            >
-              <FaGithub className="size-5" />
-            </a>
             <a
               href={EXTERNAL_LINKS.TWITTER}
               className="px-3 py-2.5 transition-opacity hover:opacity-80"

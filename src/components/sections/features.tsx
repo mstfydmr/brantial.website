@@ -5,73 +5,81 @@ import { cn } from '@/lib/utils';
 const features = [
   {
     icon: Layers,
-    title: (
-      <>
-        Schema
-        <br />
-        Builder
-      </>
-    ),
-    description: 'Design content structures your way.',
+    title: 'AI Search Visibility',
+    description: 'Stay Visible in Generative AI Answers',
     subDescription:
-      'Scalar CMS gives you full control over content with a streamlined, API-first experience — perfect for teams who want speed without sacrificing flexibility.',
-    className: '!pb-0',
-    images: [
-      {
-        src: '/images/landing/feature-1.webp',
-        alt: 'Schema Builder',
-        width: 700,
-        height: 320,
-      },
-    ],
+      'Ensure your brand appears in AI-driven search results and LLM answers. We optimize your content so customers discover you, not your competitors.',
+    // className: '!pb-0',
+    // images: [
+    //   {
+    //     src: '/images/landing/feature-1.webp',
+    //     alt: 'Schema Builder',
+    //     width: 700,
+    //     height: 320,
+    //   },
+    // ],
   },
   {
     icon: Users2,
-    title: 'Real Time Collaboration',
-    description: 'Built for content teams.',
+    title: 'Data-Driven Insights',
+    description: 'Understand Real User Prompts at Scale',
     subDescription:
-      'Draft, review, and publish content with confidence. Autosave, rich text editing, role-based permissions, and revision history come standard.',
-    className: '!pb-0',
-    images: [
-      {
-        src: '/images/landing/feature-2-1.webp',
-        alt: 'Real Time Collaboration',
-        width: 620,
-        height: 108,
-      },
-      {
-        src: '/images/landing/feature-2-2.webp',
-        alt: 'Real Time Collaboration',
-        width: 620,
-        height: 108,
-      },
-      {
-        src: '/images/landing/feature-2-3.webp',
-        alt: 'Real Time Collaboration',
-        width: 620,
-        height: 108,
-      },
-    ],
+      'Go beyond keywords. Analyze millions of real conversations to uncover intent, trends, and opportunities — powering smarter visibility strategies.',
+    // className: '!pb-0',
+    // images: [
+    //   {
+    //     src: '/images/landing/feature-2-1.webp',
+    //     alt: 'Real Time Collaboration',
+    //     width: 620,
+    //     height: 108,
+    //   },
+    //   {
+    //     src: '/images/landing/feature-2-2.webp',
+    //     alt: 'Real Time Collaboration',
+    //     width: 620,
+    //     height: 108,
+    //   },
+    //   {
+    //     src: '/images/landing/feature-2-3.webp',
+    //     alt: 'Real Time Collaboration',
+    //     width: 620,
+    //     height: 108,
+    //   },
+    // ],
   },
   {
     icon: Images,
-    title: 'Asset Management',
-    description: 'Organize your media like a pro.',
+    title: 'LLM Optimization',
+    description: 'Make Your Content AI-Readable and Citable',
     subDescription:
-      'Upload, crop, tag, and reuse images, videos, and docs with our sleek asset manager. Automatically optimizes files and handles CDN delivery.',
+      'From schema markup to contextual optimization, we structure your content so Large Language Models recognize and cite your brand in answers.',
   },
   {
     icon: ToggleLeft,
-    title: 'Granular Permissions',
-    description: 'Control who does what.',
+    title: 'Future-Proof Strategy',
+    description: 'Thrive Beyond Traditional SEO',
     subDescription:
-      'Create roles for editors, developers, and guests with precision. Lock down fields, models, or even specific actions.',
+      'As organic search traffic declines, we help you adapt with GEO (Generative Engine Optimization) and LLMO, securing sustainable visibility in the AI era.',
+  },
+  {
+    icon: ToggleLeft,
+    title: 'Analytics & Tracking',
+    description: 'Measure AI Search Visibility, Prove Impact',
+    subDescription:
+      'Track how often your brand appears in AI-driven answers, which pages get cited, and what converts. We turn prompts and citations into clear KPIs—impressions, inclusion rate, referral clicks, and assisted conversions—so you can double down on what works.',
+  },
+  {
+    icon: ToggleLeft,
+    title: 'Speed & Adaptability',
+    description: 'Ship Fast, Stay Ahead of AI Changes',
+    subDescription:
+      'The AI search ecosystem shifts weekly. We iterate content, schema, and entity signals rapidly, test across models, and roll out updates without touching your core stack—keeping your brand visible as algorithms evolve.',
   },
 ];
 
 export function Features() {
   return (
-    <section className="container">
+    <section className="container overflow-x-clip">
       <div className="grid grid-cols-1 border border-t-0 md:grid-cols-2">
         {features.map((feature, index) => (
           <div
@@ -81,6 +89,8 @@ export function Features() {
               index == 0 && 'border-b md:border-e',
               index == 1 && 'border-b md:border-b-0',
               index == 3 && 'border-t md:border-s',
+              index == 4 && 'border-t',
+              index == 5 && 'border-t md:border-s',
               feature.className,
             )}
           >

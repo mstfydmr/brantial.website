@@ -21,16 +21,18 @@ import {
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 type Category =
-  | 'Developers'
-  | 'Content Editing & Workflow'
-  | 'Cloud & Hosting'
-  | 'Community & Support';
+  | 'General'
+  | 'Security & Privacy'
+  | 'Pricing & Plans'
+  | 'Support'
+  | 'Accounts & Access';
 
 const categories: Category[] = [
-  'Developers',
-  'Content Editing & Workflow',
-  'Cloud & Hosting',
-  'Community & Support',
+  'General',
+  'Security & Privacy',
+  'Pricing & Plans',
+  'Support',
+  'Accounts & Access',
 ];
 
 type FAQ = {
@@ -39,71 +41,110 @@ type FAQ = {
 };
 
 const faqs: Record<Category, FAQ[]> = {
-  Developers: [
+  General: [
     {
-      question: 'How do I install Scalar CMS in my project?',
-      answer: (
-        <>
-          You can install Scalar with a single CLI command. It supports popular
-          frameworks like Next.js, Nuxt, SvelteKit, and more. Use our official
-          SDK or connect directly to the GraphQL API. See the{' '}
-          <a href="#" className="text-primary underline">
-            Quickstart Guide
-          </a>{' '}
-          for full details.
-        </>
-      ),
+      question: 'What is Brantial?',
+      answer:
+        'Brantial is an AI-powered platform designed to help businesses and individuals automate tasks, analyze data, and optimize workflows.',
     },
     {
-      question: 'Is Scalar open source?',
+      question: 'Who should use Brantial?',
       answer:
-        'Yes, Scalar is fully open source under the MIT license. You can view, modify, and contribute to the codebase on GitHub. Our cloud offering provides additional enterprise features, but the core CMS is free to use.',
+        'It’s suitable for entrepreneurs, startups, agencies, and enterprises looking to boost efficiency with AI.',
     },
     {
-      question: 'What API types does Scalar support?',
+      question: 'Do I need technical knowledge to use Brantial?',
       answer:
-        'Scalar provides both GraphQL and REST APIs. The GraphQL API offers a flexible query language with strong typing, while the REST API provides simple HTTP endpoints for common operations. Both APIs are fully documented with SDKs available in multiple languages.',
+        'No. Brantial is built for both technical and non-technical users.',
     },
     {
-      question: 'Can I define content models with code?',
+      question: 'How is Brantial different from other AI tools?',
       answer:
-        'Yes, Scalar supports code-first content modeling. You can define your schemas using TypeScript, allowing for version control and type safety. This approach works well with CI/CD pipelines and makes it easy to maintain consistent content structures across environments.',
-    },
-  ],
-  'Content Editing & Workflow': [
-    {
-      question: 'Can I create custom content workflows?',
-      answer:
-        'Yes, Scalar allows you to define custom workflows for content creation, review, and publishing. You can set up multiple stages with granular permissions for different team members.',
+        'Brantial focuses on simplicity, scalability, and customizable workflows, making it more flexible for businesses of any size.',
     },
     {
-      question: 'Does Scalar support real-time collaboration?',
+      question: 'Is Brantial cloud-based?',
       answer:
-        'Yes, our Cloud plan includes real-time collaboration features, allowing multiple team members to work on content simultaneously with live updates and conflict resolution.',
+        'Yes. You can access Brantial from anywhere without installing software.',
+    },
+    {
+      question: 'Is Brantial continuously updated?',
+      answer:
+        'Yes. We regularly add new features, improvements, and AI models.',
+    },
+    {
+      question: 'Can Brantial grow with my business?',
+      answer:
+        'Yes. Brantial is scalable and supports small projects up to enterprise-level needs.',
+    },
+    {
+      question: 'Where is Brantial based?',
+      answer: 'Brantial is an international platform with users worldwide.',
     },
   ],
-  'Cloud & Hosting': [
+  'Security & Privacy': [
     {
-      question: 'What are the differences between self-hosted and cloud?',
+      question: 'How does Brantial keep my data safe?',
       answer:
-        'The self-hosted version gives you complete control over your infrastructure but requires you to manage hosting, backups, and scaling. The Cloud version is fully managed with additional features like real-time collaboration, role-based access controls, and built-in CDN.',
+        'We use encryption, secure servers, and follow strict compliance standards.',
     },
     {
-      question: 'Can I migrate from self-hosted to cloud later?',
+      question: 'Do you share my data with third parties?',
+      answer: 'No. Your data stays private and is never sold or shared.',
+    },
+    {
+      question: 'Can I delete my data anytime?',
       answer:
-        'Yes, we provide migration tools to easily transfer your content and settings from a self-hosted Scalar instance to our cloud platform.',
+        'Yes. You have full control and can request deletion whenever needed.',
     },
   ],
-  'Community & Support': [
+  'Pricing & Plans': [
     {
-      question: 'Where can I get help with Scalar?',
-      answer:
-        'For the open-source version, we have an active community on Discord and GitHub. Cloud customers receive email support and access to our knowledge base. Enterprise plans include dedicated support channels and SLAs.',
+      question: 'Does Brantial have a free trial?',
+      answer: 'Yes. You can try Brantial for free before choosing a paid plan.',
     },
     {
-      question: 'How can I contribute to Scalar?',
+      question: 'What payment methods are supported?',
       answer:
-        'We welcome contributions! You can contribute code, report bugs, suggest features, or help improve our documentation. Check our GitHub repository for contribution guidelines.',
+        'We accept major credit cards, PayPal, and other secure payment options.',
+    },
+    {
+      question: 'Can I switch between plans later?',
+      answer: 'Yes. You can upgrade or downgrade your plan at any time.',
+    },
+    {
+      question: 'Do you offer enterprise pricing?',
+      answer: 'Yes. Custom pricing is available for larger organizations.',
+    },
+  ],
+  Support: [
+    {
+      question: 'How can I contact Brantial support?',
+      answer: 'You can reach us via live chat or email support.',
+    },
+    {
+      question: 'What are your support hours?',
+      answer: 'Our support team is available 24/7 to assist you.',
+    },
+    {
+      question: 'Do you provide onboarding or training?',
+      answer:
+        'Yes. We provide documentation, tutorials, and training sessions for teams.',
+    },
+  ],
+  'Accounts & Access': [
+    {
+      question: 'Can I use Brantial on multiple devices?',
+      answer: 'Yes. You can log in from any device with internet access.',
+    },
+    {
+      question: 'Do you support team accounts?',
+      answer:
+        'Yes. You can add team members, assign roles, and manage permissions.',
+    },
+    {
+      question: 'What happens if I forget my password?',
+      answer: 'You can reset it instantly using the password recovery option.',
     },
   ],
 };
@@ -113,6 +154,30 @@ export function FAQSection() {
 
   return (
     <section className="overflow-hidden">
+      {/* FAQPage JSON-LD for SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'FAQPage',
+            mainEntity: Object.keys(faqs).flatMap((category) =>
+              faqs[category as Category].map((faq) => ({
+                '@type': 'Question',
+                name: faq.question,
+                acceptedAnswer: {
+                  '@type': 'Answer',
+                  text:
+                    typeof faq.answer === 'string'
+                      ? faq.answer
+                      : // If answer is React node, render a best-effort text fallback
+                        String(faq.answer),
+                },
+              })),
+            ),
+          }),
+        }}
+      />
       <div className="container divide-y">
         <div className="hidden border-x border-b-0 p-7.5 md:block" />
 

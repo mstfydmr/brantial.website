@@ -25,7 +25,7 @@ export default function Logo({
       <img
         src="/layout/logo-wordmark.svg"
         alt="Scalar"
-        width={51.353}
+        width={90}
         height={14.009}
         className={cn('object-contain', wordmarkClassName)}
       />

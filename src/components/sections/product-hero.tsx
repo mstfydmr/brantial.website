@@ -1,6 +1,7 @@
 import { FaGithub } from 'react-icons/fa6';
 
 import { Button } from '@/components/ui/button';
+import { SITE_SIGNUP_URL } from '@/consts';
 
 export function ProductHero() {
   return (
@@ -19,7 +20,9 @@ export function ProductHero() {
         {/* CTA Buttons */}
         <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6">
           <Button asChild className="md:px-10">
-            <a href="#">Start Free Trial</a>
+            <a href={SITE_SIGNUP_URL} target="_blank" rel="noopener noreferrer">
+              Start Free Trial
+            </a>
           </Button>
           <Button asChild variant="outline">
             <a href="#">

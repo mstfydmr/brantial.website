@@ -92,3 +92,33 @@ const imageURL = new URL(finalImage, Astro.url);
 <meta property="twitter:description" content={finalDescription} />
 <meta property="twitter:image" content={imageURL} />
 <meta property="twitter:creator" content={SITE_METADATA.twitter.creator} />
+
+<!-- Website schema JSON-LD -->
+<script
+  type="application/ld+json"
+  set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: SITE_METADATA.title.default,
+    url: Astro.site,
+    description: SITE_METADATA.description,
+    publisher: {
+      '@type': 'Organization',
+      name: SITE_METADATA.publisher,
+    },
+    sameAs: ['https://www.linkedin.com/company/brantialai/'],
+  })}
+/>
+
+<!-- Organization schema JSON-LD -->
+<script
+  type="application/ld+json"
+  set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: SITE_METADATA.publisher || SITE_METADATA.title.default,
+    url: Astro.site,
+    logo: new URL(SITE_METADATA.icons.icon[1].url, Astro.site).toString(),
+    sameAs: ['https://www.linkedin.com/company/brantialai/'],
+  })}
+/>
