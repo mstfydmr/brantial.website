@@ -6,4 +6,6 @@
     "directory": "./dist",
     "not_found_handling": "404-page", // If you have a custom `src/pages/404.astro` page
   },
+
+  "account_id": "1a719c3ccf6b5d356467662be74b237f",
 }
