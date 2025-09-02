@@ -53,14 +53,14 @@ export const SITE_METADATA = {
 };
 
 // Site-level URLs (login/signup) so components can import them from a single place
-export const SITE_LOGIN_URL = 'https://dev.brantial.com/login';
-export const SITE_SIGNUP_URL = 'https://app.brantial.com/register';
+export const SITE_LOGIN_URL = 'https://app.brantial.ai/login';
+export const SITE_SIGNUP_URL = 'https://app.brantial.ai/register';
 
 // EEAT: Central organization data and social profiles
 export const ORGANIZATION = {
   name: 'Brantial',
   legalName: 'Webtures Ltd',
-  url: 'https://www.brantial.com',
+  url: 'https://www.brantial.ai',
   logoUrl: '/layout/logo-wordmark.svg',
   foundingDate: '2024-01-01',
   founders: ['Brantial Team'],

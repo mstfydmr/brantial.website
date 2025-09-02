@@ -9,7 +9,7 @@ export const EXTERNAL_LINKS = {
   LINKEDIN: 'https://www.linkedin.com/company/brantialai/',
 
   // Contact
-  EMAIL: 'mailto:hello@brantial.com',
+  EMAIL: 'mailto:hello@brantial.ai',
 
   // Open Source
   GITHUB_REPO: '#',
