@@ -53,6 +53,19 @@ const imageURL = new URL(finalImage, Astro.url);
 <!-- Canonical URL -->
 <link rel="canonical" href={canonicalURL} />
 
+<link
+  rel="preload"
+  href="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.1.0/dist/cookieconsent.css"
+  as="style"
+  onload="this.rel='stylesheet'"
+/>
+<noscript
+  ><link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.1.0/dist/cookieconsent.css"
+  /></noscript
+>
+
 <!-- Primary Meta Tags -->
 <title>{finalTitle}</title>
 <meta name="title" content={finalTitle} />

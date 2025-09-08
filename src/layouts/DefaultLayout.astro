@@ -55,5 +55,7 @@ const currentPath = Astro.url.pathname;
     <Navbar currentPage={currentPath} client:load />
     <main class="flex-1"><slot /></main>
     <Footer client:load />
+    <!-- CookieConsent config script -->
+    <script type="module" src="/js/cookieconsent-config.js" defer></script>
   </body>
 </html>
