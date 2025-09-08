@@ -42,7 +42,7 @@ export function Hero() {
             alt="Hero Image"
             width={1320}
             height={743}
-            className="rounded-lg mask-b-from-50% mask-b-to-90%"
+            className="rounded-lg border mask-b-from-50% mask-b-to-90%"
           />
         </div>
       </div>

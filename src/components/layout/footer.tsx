@@ -20,20 +20,20 @@ import { EXTERNAL_LINKS } from '@/constants/external-links';
 import { SITE_SIGNUP_URL } from '@/consts';
 import { cn } from '@/lib/utils';
 
-type PlanName = 'Entry' | 'Pro' | 'Growth';
+type PlanName = 'Starter' | 'Pro' | 'Growth';
 
 type BillingPeriod = 'monthly' | 'annually';
 
 const PRICES: Record<BillingPeriod, Record<PlanName, number>> = {
   monthly: {
-    Entry: 19,
-    Pro: 99,
-    Growth: 199,
+    Starter: 59,
+    Growth: 149,
+    Pro: 299,
   },
   annually: {
-    Entry: 16,
-    Pro: 83,
-    Growth: 166,
+    Starter: Math.round((59 * 10) / 12),
+    Growth: Math.round((149 * 10) / 12),
+    Pro: Math.round((299 * 10) / 12),
   },
 };
 
@@ -42,8 +42,9 @@ const BASE_PLANS: Array<{
   features: { name: string; icon: ReactNode }[];
   button: { text: string; href: string; className?: string };
 }> = [
+  // Starter (left)
   {
-    name: 'Entry',
+    name: 'Starter',
     features: [
       { name: '1 project', icon: <Diamond className="size-5" /> },
       { name: '20 prompts', icon: <Terminal className="size-5" /> },
@@ -51,7 +52,7 @@ const BASE_PLANS: Array<{
       { name: '10 tags', icon: <Tag className="size-5" /> },
       { name: '0 team members', icon: <Users className="size-5" /> },
       {
-        name: 'AI Models: OpenAI, Claude, Google, Perplexity, Grok, Mistral',
+        name: 'AI Models: OpenAI, Claude, Google, Google AI Overview',
         icon: <Globe className="size-5" />,
       },
     ],
@@ -61,8 +62,9 @@ const BASE_PLANS: Array<{
       //   className: 'bg-border hover:bg-border/80 text-foreground',
     },
   },
+  // Growth (middle - recommended)
   {
-    name: 'Pro',
+    name: 'Growth',
     features: [
       { name: '3 projects', icon: <Diamond className="size-5" /> },
       { name: '50 prompts', icon: <Terminal className="size-5" /> },
@@ -79,8 +81,9 @@ const BASE_PLANS: Array<{
       href: SITE_SIGNUP_URL,
     },
   },
+  // Pro (right)
   {
-    name: 'Growth',
+    name: 'Pro',
     features: [
       { name: '10 projects', icon: <Diamond className="size-5" /> },
       { name: '200 prompts', icon: <Terminal className="size-5" /> },
@@ -167,18 +170,17 @@ const Footer = () => {
     };
   }, []);
 
-  // Prevent hydration mismatch by using a consistent theme class until mounted
-  // Footer is in light mode when dark theme is applied (inverted behavior)
-  const themeClass =
-    mounted && theme === 'dark'
-      ? 'light bg-foreground text-background [&_*]:border-border/30'
-      : 'dark bg-background text-foreground';
+  // Apply footer theme normally: dark => dark, light => light
+  const themeClass = mounted
+    ? theme === 'dark'
+      ? 'dark bg-background text-foreground'
+      : 'light bg-background text-foreground'
+    : '';
 
-  // Logo should be inverted when footer has light background (dark theme)
-  // and not inverted when footer has dark background (light theme)
+  // Logo inversion matches background: invert on dark background, normal on light
   const logoWordmarkClass = cn(
     'w-[min(100%,400px)] translate-y-1/4 md:translate-y-1/3 md:h-32 md:w-full lg:h-73 opacity-10',
-    mounted && theme === 'dark' ? 'invert-0' : 'invert',
+    mounted ? (theme === 'dark' ? 'invert' : 'invert-0') : 'invert-0',
   );
 
   // Build plans with dynamic prices based on selected period
@@ -308,12 +310,12 @@ const Footer = () => {
                   <h3 className="font-weight-display text-2xl md:text-3xl">
                     Enterprise
                   </h3>
-                  <p className="text-muted-foreground mt-2 text-sm md:text-base">
+                  <p className="mt-2 text-sm opacity-80 md:text-base">
                     Best for enterprise businesses
                   </p>
                 </div>
               </div>
-              <Button asChild className="w-fit">
+              <Button asChild variant="secondary" className="w-fit">
                 <a href="/contact">
                   <span className="inline-flex items-center gap-2">
                     <CalendarDays className="size-4" />
@@ -327,12 +329,12 @@ const Footer = () => {
               <div className="grid grid-cols-3 gap-x-6 gap-y-4 md:max-w-[760px] md:gap-x-8 md:gap-y-5 lg:max-w-[920px] lg:gap-x-10 lg:gap-y-6">
                 {ENTERPRISE_FEATURES.map((feature, index) => (
                   <div key={index} className="relative space-y-0.5 p-2 md:p-3">
-                    <div className="text-foreground flex items-center gap-2 text-sm leading-snug font-medium">
+                    <div className="flex items-center gap-2 text-sm leading-snug font-medium">
                       <span className="flex-shrink-0">{feature.icon}</span>
                       {feature.title}
                     </div>
                     {feature.subtitle && (
-                      <div className="text-muted-foreground font-weight-display text-base">
+                      <div className="font-weight-display text-base opacity-40">
                         {feature.subtitle}
                       </div>
                     )}
