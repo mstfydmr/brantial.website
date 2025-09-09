@@ -190,6 +190,12 @@
   .bordered-div-padding {
     @apply p-6 md:p-8 lg:p-10;
   }
+  .font-number {
+    font-family: 'Arial Black', Impact, system-ui,
+      -apple-system, 'Segoe UI', Roboto, sans-serif;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+  }
 }
 
 /* Shiki syntax highlighting support */

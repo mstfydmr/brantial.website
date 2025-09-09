@@ -1,0 +1,11 @@
+---
+import DefaultLayout from '@/layouts/DefaultLayout.astro';
+import { LeaderboardHero } from '@/components/sections/leaderboard-hero';
+import { LeaderboardSection } from '@/components/sections/leaderboard-section';
+---
+
+<DefaultLayout title="Leaderboard" description="AI Visibility Leaderboard">
+  <LeaderboardHero client:load />
+  <LeaderboardSection client:load category="visible" />
+  <LeaderboardSection client:load category="rising" />
+</DefaultLayout>
