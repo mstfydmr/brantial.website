@@ -64,7 +64,8 @@ export function LeaderboardSection({
       <div className="border-x border-t">
         <div className="mb-4 flex items-center justify-between px-4 pt-5 md:px-6">
           <div className="text-muted-foreground text-sm">
-            {CATEGORY_LABEL[category]} {industryLabel} this week
+            <span>{CATEGORY_LABEL[category]}</span>
+            <span className="hidden md:inline"> {industryLabel} this week</span>
           </div>
           <div className="flex items-center gap-3">
             <Select value={industry} onValueChange={setIndustry}>
@@ -83,18 +84,18 @@ export function LeaderboardSection({
         </div>
 
         {/* Top 3 unified strip */}
-        <div className="bg-card/40 grid grid-cols-1 border-b pr-0 pl-4 md:grid-cols-4 md:pr-0 md:pl-6">
+        <div className="bg-card/40 divide-border grid grid-cols-1 gap-0 divide-y border-b pr-0 pl-4 md:grid-cols-4 md:gap-4 md:divide-y-0 md:pr-0 md:pl-6">
           {topThree.map((item, idx) => (
             <div
               key={idx}
               className={cn(
-                'relative flex min-h-[180px] flex-col justify-end overflow-hidden py-6 md:min-h-[220px] md:py-8 lg:min-h-[260px]',
+                'relative flex min-h-[100px] flex-col justify-end overflow-hidden py-3 pl-4 md:min-h-[220px] md:py-8 md:pl-0 lg:min-h-[260px]',
                 idx === 0 ? 'md:col-span-2' : 'md:col-span-1',
-                idx > 0 ? 'pl-4 md:border-l md:pl-6' : '',
+                idx > 0 ? 'md:border-l md:pl-6' : '',
               )}
             >
               <div
-                className="text-foreground/3 font-number pointer-events-none absolute right-[-45px] bottom-[-45px] text-[12rem] leading-none font-black select-none md:text-[18rem]"
+                className="text-foreground/3 font-number pointer-events-none absolute right-[-40px] bottom-[-40px] text-[10rem] leading-none font-black select-none md:right-[-45px] md:bottom-[-45px] md:text-[16rem]"
                 style={{
                   WebkitTextFillColor: 'transparent',
                   WebkitTextStroke: '2px currentColor',
@@ -126,13 +127,13 @@ export function LeaderboardSection({
         </div>
 
         {/* Table merged below strip */}
-        <div className="overflow-x-auto px-2 md:px-4">
+        <div className="overflow-x-auto px-2 md:overflow-x-hidden md:px-4">
           <table className="w-full text-left text-[15px] md:text-base">
             <thead className="text-muted-foreground">
               <tr className="border-b">
                 <th className="py-3 pr-3">#</th>
                 <th className="py-3 pr-3">Company</th>
-                <th className="py-3 pr-3">Top platform</th>
+                <th className="hidden py-3 pr-3 md:table-cell">Top platform</th>
                 <th className="py-3 pr-3" style={{ textAlign: 'right' }}>
                   Visibility Score
                 </th>
@@ -146,7 +147,7 @@ export function LeaderboardSection({
                 >
                   <td className="w-10 py-3 pr-3">{row.rank}</td>
                   <td className="py-3 pr-3">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-3">
                       {'domain' in row && (row as any).domain && (
                         <Favicon
                           domain={(row as any).domain as string}
@@ -154,31 +155,36 @@ export function LeaderboardSection({
                           rounded={false}
                         />
                       )}
-                      <span className="font-semibold">
-                        {(row as any).company}
-                      </span>
-                      {'change' in row &&
-                        typeof (row as RisingEntry).change === 'number' && (
-                          <span
-                            className={cn(
-                              'flex items-center gap-1 text-xs',
-                              (row as RisingEntry).change &&
-                                (row as RisingEntry).change! > 0
-                                ? 'text-emerald-500'
-                                : 'text-rose-500',
-                            )}
-                          >
-                            {(row as RisingEntry).change! > 0 ? (
-                              <ChevronUp className="size-3" />
-                            ) : (
-                              <ChevronDown className="size-3" />
-                            )}
-                            {(row as RisingEntry).change}
-                          </span>
-                        )}
+                      <div className="flex-1">
+                        <div className="font-semibold">
+                          {(row as any).company}
+                        </div>
+                        {/* mobile stacked details removed; show only logo + company on small screens */}
+                      </div>
+                      <div className="hidden md:block">
+                        {'change' in row &&
+                          typeof (row as RisingEntry).change === 'number' && (
+                            <span
+                              className={cn(
+                                'flex items-center gap-1 text-xs',
+                                (row as RisingEntry).change &&
+                                  (row as RisingEntry).change! > 0
+                                  ? 'text-emerald-500'
+                                  : 'text-rose-500',
+                              )}
+                            >
+                              {(row as RisingEntry).change! > 0 ? (
+                                <ChevronUp className="size-3" />
+                              ) : (
+                                <ChevronDown className="size-3" />
+                              )}
+                              {(row as RisingEntry).change}
+                            </span>
+                          )}
+                      </div>
                     </div>
                   </td>
-                  <td className="py-3 pr-3">
+                  <td className="hidden py-3 pr-3 md:table-cell">
                     <div className="flex items-center gap-2">
                       {PLATFORMS[row.topPlatform as keyof typeof PLATFORMS]
                         ?.domain && (
