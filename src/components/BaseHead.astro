@@ -123,7 +123,6 @@ const imageURL = new URL(finalImage, Astro.url);
       ORGANIZATION.name ||
       SITE_METADATA.publisher ||
       SITE_METADATA.title.default,
-    legalName: ORGANIZATION.legalName,
     url: ORGANIZATION.url || Astro.site,
     logo: new URL(
       ORGANIZATION.logoUrl || SITE_METADATA.icons.icon[1].url,

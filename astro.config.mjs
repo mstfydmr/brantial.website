@@ -9,7 +9,7 @@ import cloudflare from '@astrojs/cloudflare';
 
 // https://astro.build/config
 export default defineConfig({
-    site: 'https://brantial.airscarp.workers.dev',
+    site: 'https://brantial.ai',
     integrations: [mdx(), sitemap(), react()],
 
     vite: {

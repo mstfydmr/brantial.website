@@ -1,0 +1,16 @@
+Generated for Brantial, this is an llms.txt file meant for consumption by LLMs.  
+The XML sitemap of this website may be found at https://brantial.ai/sitemap-index.xml.
+
+# Brantial
+
+## Pages
+- [Home](https://brantial.ai/)
+- [AI Authority Index](https://brantial.ai/aI-authority-index/)
+- [FAQs](https://brantial.ai/faq/)
+- [Contact](https://brantial.ai/contact/)
+- [Privacy Policy](https://brantial.ai/privacy-policy/)
+- [Terms of Service](https://brantial.ai/terms-of-service/)
+
+## Account / Membership
+- [Login](https://app.brantial.ai/)
+- [Start Free Trial](https://app.brantial.ai/)

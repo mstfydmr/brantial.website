@@ -52,6 +52,10 @@ const BASE_PLANS: Array<{
       { name: '10 tags', icon: <Tag className="size-5" /> },
       { name: '0 team members', icon: <Users className="size-5" /> },
       {
+        name: 'Improve Low Visibility Agent',
+        icon: <LineChart className="size-5" />,
+      },
+      {
         name: 'AI Models: OpenAI, Claude, Google, Google AI Overview',
         icon: <Globe className="size-5" />,
       },
@@ -72,6 +76,10 @@ const BASE_PLANS: Array<{
       { name: '50 tags', icon: <Tag className="size-5" /> },
       { name: '10 team members', icon: <Users className="size-5" /> },
       {
+        name: 'Improve Low Visibility Agent',
+        icon: <LineChart className="size-5" />,
+      },
+      {
         name: 'AI Models: OpenAI, Claude, Google, Perplexity, Grok, Mistral',
         icon: <Globe className="size-5" />,
       },
@@ -90,6 +98,10 @@ const BASE_PLANS: Array<{
       { name: '100 competitors', icon: <LineChart className="size-5" /> },
       { name: '200 tags', icon: <Tag className="size-5" /> },
       { name: '50 team members', icon: <Users className="size-5" /> },
+      {
+        name: 'Improve Low Visibility Agent',
+        icon: <LineChart className="size-5" />,
+      },
       {
         name: 'AI Models: OpenAI, Claude, Google, Perplexity, Grok, Mistral',
         icon: <Globe className="size-5" />,

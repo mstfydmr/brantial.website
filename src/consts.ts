@@ -59,7 +59,6 @@ export const SITE_SIGNUP_URL = 'https://app.brantial.ai/register';
 // EEAT: Central organization data and social profiles
 export const ORGANIZATION = {
   name: 'Brantial',
-  legalName: 'Webtures Ltd',
   url: 'https://www.brantial.ai',
   logoUrl: '/layout/logo-wordmark.svg',
   foundingDate: '2024-01-01',

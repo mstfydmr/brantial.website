@@ -1,0 +1,4 @@
+User-agent: *
+
+Allow: /
+Sitemap: https://brantial.ai/sitemap-index.xml
