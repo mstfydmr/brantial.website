@@ -4,6 +4,12 @@ import * as React from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
 import { INDUSTRIES, LEADERBOARD, PLATFORMS } from '@/leaderboard';
+import type { Industry, Leaderboard, PlatformInfo } from '@/leaderboard';
+import {
+  INDUSTRIES_TURKEY,
+  LEADERBOARD_TURKEY,
+  PLATFORMS_TURKEY,
+} from '@/leaderboard-turkey';
 import { cn } from '@/lib/utils';
 import { Favicon } from '@/components/elements/favicon';
 import { CircleProgressbar } from '@/components/elements/circle-progressbar';
@@ -39,22 +45,61 @@ function formatPercent(value: number): string {
 export function LeaderboardSection({
   industry: initialIndustry = 'software-companies',
   category = 'visible',
+  dataset = 'global',
 }: {
-  industry?: keyof typeof INDUSTRIES | string;
+  industry?: string;
   category?: 'visible' | 'rising' | 'trending';
+  dataset?: 'global' | 'turkey';
 }) {
-  const [industry, setIndustry] = React.useState<string>(initialIndustry);
+  const {
+    industriesMap,
+    leaderboardMap,
+    platformsMap,
+  }: {
+    industriesMap: Record<string, Industry>;
+    leaderboardMap: Leaderboard;
+    platformsMap: Record<string, PlatformInfo>;
+  } = React.useMemo(() => {
+    if (dataset === 'turkey') {
+      return {
+        industriesMap: INDUSTRIES_TURKEY,
+        leaderboardMap: LEADERBOARD_TURKEY,
+        platformsMap: PLATFORMS_TURKEY,
+      };
+    }
+
+    return {
+      industriesMap: INDUSTRIES,
+      leaderboardMap: LEADERBOARD,
+      platformsMap: PLATFORMS,
+    };
+  }, [dataset]);
+
+  const initialIndustryFromDataset = React.useMemo(() => {
+    if (initialIndustry && industriesMap[initialIndustry]) {
+      return initialIndustry;
+    }
+    const firstKey = Object.keys(industriesMap)[0];
+    return firstKey || '';
+  }, [initialIndustry, industriesMap]);
+
+  const [industry, setIndustry] = React.useState<string>(
+    initialIndustryFromDataset,
+  );
+
+  React.useEffect(() => {
+    setIndustry(initialIndustryFromDataset);
+  }, [initialIndustryFromDataset]);
 
   const entries = React.useMemo(() => {
-    const byCategory = (LEADERBOARD as any)[category] as
+    const byCategory = (leaderboardMap as any)[category] as
       | Record<string, Array<VisibleEntry | RisingEntry>>
       | undefined;
     if (!byCategory) return [] as Array<VisibleEntry | RisingEntry>;
     return (byCategory[industry] || []) as Array<VisibleEntry | RisingEntry>;
-  }, [industry, category]);
+  }, [industry, category, leaderboardMap]);
 
-  const industryLabel =
-    INDUSTRIES[industry as keyof typeof INDUSTRIES]?.displayName || 'Industry';
+  const industryLabel = industriesMap[industry]?.displayName || 'Industry';
 
   const topThree = entries.slice(0, 3) as Array<VisibleEntry | RisingEntry>;
   const rest = entries.slice(0, 100) as Array<VisibleEntry | RisingEntry>;
@@ -73,7 +118,7 @@ export function LeaderboardSection({
                 <SelectValue placeholder="Select industry" />
               </SelectTrigger>
               <SelectContent>
-                {Object.values(INDUSTRIES).map((it) => (
+                {Object.values(industriesMap).map((it) => (
                   <SelectItem key={it.id} value={it.id}>
                     {it.displayName}
                   </SelectItem>
@@ -186,21 +231,19 @@ export function LeaderboardSection({
                   </td>
                   <td className="hidden py-3 pr-3 md:table-cell">
                     <div className="flex items-center gap-2">
-                      {PLATFORMS[row.topPlatform as keyof typeof PLATFORMS]
-                        ?.domain && (
+                      {platformsMap[row.topPlatform as string]?.domain && (
                         <Favicon
                           domain={
-                            PLATFORMS[
-                              row.topPlatform as keyof typeof PLATFORMS
-                            ]!.domain as string
+                            platformsMap[row.topPlatform as string]!
+                              .domain as string
                           }
                           size={16}
                           rounded={false}
                         />
                       )}
                       <span>
-                        {PLATFORMS[row.topPlatform as keyof typeof PLATFORMS]
-                          ?.displayName || row.topPlatform}
+                        {platformsMap[row.topPlatform as string]?.displayName ||
+                          row.topPlatform}
                       </span>
                     </div>
                   </td>

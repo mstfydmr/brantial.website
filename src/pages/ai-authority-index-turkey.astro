@@ -1,0 +1,20 @@
+---
+import DefaultLayout from '@/layouts/DefaultLayout.astro';
+import { LeaderboardHero } from '@/components/sections/leaderboard-hero';
+import { LeaderboardSection } from '@/components/sections/leaderboard-section';
+---
+
+<DefaultLayout
+  title="AI Authority Index Turkey"
+  description="Discover the brands leading AI visibility across Turkey"
+>
+  <LeaderboardHero
+    client:load
+    title="AI Authority Index Turkey"
+    description="Explore the brands leading AI search visibility across Turkish industries. Updated weekly based on 3M+ daily prompts across major answer engines."
+    badgeHref="/ai-authority-index-turkey"
+    badgeLabel="Brantial Turkey"
+  />
+  <LeaderboardSection client:load category="visible" dataset="turkey" />
+  <!-- <LeaderboardSection client:load category="rising" dataset="turkey" /> -->
+</DefaultLayout>
