@@ -7,11 +7,18 @@ import { Compatibility } from '@/components/sections/compatibility';
 import { Features } from '@/components/sections/features';
 import { Hero } from '@/components/sections/hero';
 import { Testimonials } from '@/components/sections/testimonials';
+import { HomeFAQSection } from '@/components/sections/home-faq';
+import { Comparison } from '@/components/sections/comparison';
 import DefaultLayout from '@/layouts/DefaultLayout.astro';
 ---
 
-<DefaultLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
+<DefaultLayout
+  title={'Brantial – Stay Visible in the AI Search Era'}
+  description={SITE_DESCRIPTION}
+>
   <Hero client:load />
   <Features client:load />
   <Testimonials client:load />
+  <Comparison client:load />
+  <HomeFAQSection client:load />
 </DefaultLayout>

@@ -7,7 +7,7 @@ import {
   Diamond,
   Globe,
   LineChart,
-  Tag,
+  Cpu,
   Terminal,
   Users,
 } from 'lucide-react';
@@ -46,13 +46,13 @@ const BASE_PLANS: Array<{
   {
     name: 'Starter',
     features: [
-      { name: '1 project', icon: <Diamond className="size-5" /> },
+      { name: '1 brand', icon: <Diamond className="size-5" /> },
       { name: '20 prompts', icon: <Terminal className="size-5" /> },
       { name: '10 competitors', icon: <LineChart className="size-5" /> },
-      { name: '10 tags', icon: <Tag className="size-5" /> },
+      // tags removed per request
       { name: '0 team members', icon: <Users className="size-5" /> },
       {
-        name: 'Improve Low Visibility Agent',
+        name: '1 Improve Low Visibility Agent',
         icon: <LineChart className="size-5" />,
       },
       {
@@ -70,13 +70,13 @@ const BASE_PLANS: Array<{
   {
     name: 'Growth',
     features: [
-      { name: '3 projects', icon: <Diamond className="size-5" /> },
+      { name: '3 brands', icon: <Diamond className="size-5" /> },
       { name: '50 prompts', icon: <Terminal className="size-5" /> },
       { name: '50 competitors', icon: <LineChart className="size-5" /> },
-      { name: '50 tags', icon: <Tag className="size-5" /> },
-      { name: '10 team members', icon: <Users className="size-5" /> },
+      // tags removed per request
+      { name: '5 team members', icon: <Users className="size-5" /> },
       {
-        name: 'Improve Low Visibility Agent',
+        name: '5 Improve Low Visibility Agents',
         icon: <LineChart className="size-5" />,
       },
       {
@@ -93,13 +93,13 @@ const BASE_PLANS: Array<{
   {
     name: 'Pro',
     features: [
-      { name: '10 projects', icon: <Diamond className="size-5" /> },
+      { name: '10 brands', icon: <Diamond className="size-5" /> },
       { name: '200 prompts', icon: <Terminal className="size-5" /> },
       { name: '100 competitors', icon: <LineChart className="size-5" /> },
-      { name: '200 tags', icon: <Tag className="size-5" /> },
-      { name: '50 team members', icon: <Users className="size-5" /> },
+      // tags removed per request
+      { name: '10 team members', icon: <Users className="size-5" /> },
       {
-        name: 'Improve Low Visibility Agent',
+        name: '10 Improve Low Visibility Agents',
         icon: <LineChart className="size-5" />,
       },
       {
@@ -120,7 +120,7 @@ const ENTERPRISE_FEATURES: Array<{
   icon: ReactNode;
 }> = [
   {
-    title: 'Projects',
+    title: 'Brands',
     subtitle: 'Unlimited',
     icon: <Diamond className="size-5" />,
   },
@@ -134,7 +134,11 @@ const ENTERPRISE_FEATURES: Array<{
     subtitle: 'Unlimited',
     icon: <LineChart className="size-5" />,
   },
-  { title: 'Tags', subtitle: 'Unlimited', icon: <Tag className="size-5" /> },
+  {
+    title: 'AI Agent',
+    subtitle: 'Unlimited',
+    icon: <Cpu className="size-5" />,
+  },
   {
     title: 'Team members',
     subtitle: 'Unlimited',
@@ -217,7 +221,7 @@ const Footer = () => {
       <div className="container">
         <div className="bordered-div-padding flex flex-col items-center justify-between border-x md:flex-row">
           <h2 className="lg:text-4xxl font-weight-display mt-6 text-xl md:mt-14 md:text-3xl lg:mt-40">
-            Start free. Scale confidently.
+            Start easy. Scale confidently.
           </h2>
           <div className="mt-10 md:mt-46">
             <div className="flex items-center gap-1 rounded-md border p-1">

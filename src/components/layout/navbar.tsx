@@ -34,11 +34,15 @@ import { SITE_LOGIN_URL, SITE_SIGNUP_URL } from '@/consts';
 type NavItem = {
   title: string;
   href?: string;
+  /** optional target for the link, e.g. '_blank' */
+  target?: string;
   subitems?: Array<{
     title: string;
     items: Array<{
       title: string;
       href: string;
+      /** optional target for subitem links */
+      target?: string;
       description?: string;
       icon?: React.ComponentType<{ className?: string }>;
       isHighlighted?: boolean;
@@ -114,7 +118,11 @@ const navigationItems: NavItem[] = [
   { title: 'AI Authority Index', href: '/aI-authority-index' },
   //   { title: 'Roadmap', href: '/roadmap' },
   { title: 'FAQs', href: '/faq' },
-  //   { title: 'Blog', href: '/blog' },
+  {
+    title: 'Blog',
+    href: 'https://www.linkedin.com/newsletters/the-visibility-report-7365767318414536705/?displayConfirmation=true',
+    target: '_blank',
+  },
   { title: 'Contact', href: '/contact' },
 ];
 
@@ -374,6 +382,8 @@ function MobileNavItem({
     return (
       <a
         href={item.href!}
+        target={item.target}
+        rel={item.target === '_blank' ? 'noopener noreferrer' : undefined}
         className="block"
         onClick={() => setIsMenuOpen(false)}
       >
@@ -470,6 +480,8 @@ function DesktopNavItem({
       <NavigationMenuItem className="">
         <a
           href={item.href!}
+          target={item.target}
+          rel={item.target === '_blank' ? 'noopener noreferrer' : undefined}
           className={cn(
             navigationMenuTriggerStyle(),
             'text-base font-medium',
