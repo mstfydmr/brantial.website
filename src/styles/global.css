@@ -177,6 +177,26 @@
   body {
     @apply bg-background text-foreground font-text font-weight-text tracking-tight;
   }
+  table {
+    @apply w-full border-collapse overflow-hidden rounded-lg border border-border text-sm;
+  }
+
+  thead {
+    @apply bg-muted text-foreground;
+  }
+
+  th,
+  td {
+    @apply border border-border px-4 py-3 text-left align-top;
+  }
+
+  th {
+    @apply font-semibold uppercase tracking-wide text-xs text-muted-foreground;
+  }
+
+  tbody tr:nth-child(even) {
+    @apply bg-accent/40;
+  }
 }
 @utility font-weight-display {
   font-weight: var(--display-weight);
