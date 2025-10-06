@@ -408,6 +408,13 @@ const Footer = () => {
           >
             Terms of Service
           </a>
+          <span className="text-border">•</span>
+          <a
+            href="/cookie-policy"
+            className="hover:text-foreground transition-opacity hover:opacity-80"
+          >
+            Cookie Policy
+          </a>
         </div>
 
         {/* Large Logo */}
