@@ -10,6 +10,7 @@ import {
   Cpu,
   Terminal,
   Users,
+  Mail,
 } from 'lucide-react';
 import { FaLinkedin, FaXTwitter } from 'react-icons/fa6';
 
@@ -363,25 +364,116 @@ const Footer = () => {
 
         {/* Social and Status Section */}
         <div className="flex flex-col justify-between border-x border-b md:flex-row">
-          <div className="bordered-div-padding flex items-center space-x-3">
-            <a
-              href={EXTERNAL_LINKS.TWITTER}
-              className="px-3 py-2.5 transition-opacity hover:opacity-80"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Twitter"
-            >
-              <FaXTwitter className="size-5" />
-            </a>
-            <a
-              href={EXTERNAL_LINKS.LINKEDIN}
-              className="px-3 py-2.5 transition-opacity hover:opacity-80"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="LinkedIn"
-            >
-              <FaLinkedin className="size-5" />
-            </a>
+          <div className="bordered-div-padding grid gap-10 md:grid-cols-3 md:gap-14">
+            <div className="space-y-3 text-sm">
+              <h4 className="text-foreground font-semibold tracking-wide uppercase">
+                Company
+              </h4>
+              <ul className="space-y-2">
+                <li>
+                  <a
+                    href="/faqs"
+                    className="hover:text-foreground transition-opacity hover:opacity-80"
+                  >
+                    FAQs
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/ai-authority-index"
+                    className="hover:text-foreground transition-opacity hover:opacity-80"
+                  >
+                    AI Authority Index
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/pricing"
+                    className="hover:text-foreground transition-opacity hover:opacity-80"
+                  >
+                    Pricing
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/blog"
+                    className="hover:text-foreground transition-opacity hover:opacity-80"
+                  >
+                    Blog
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/contact"
+                    className="hover:text-foreground transition-opacity hover:opacity-80"
+                  >
+                    Contact
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <div className="space-y-3 text-sm">
+              <h4 className="text-foreground font-semibold tracking-wide uppercase">
+                Contact
+              </h4>
+              <ul className="space-y-3">
+                <li>
+                  <a
+                    href="mailto:hello@brantial.com"
+                    className="border-border hover:bg-muted/20 inline-flex items-center gap-2 rounded-full border px-3 py-1.5 transition-colors"
+                  >
+                    <Mail className="size-4" />
+                    hello@brantial.com
+                  </a>
+                </li>
+                <li className="flex flex-wrap items-center gap-2">
+                  <a
+                    href={EXTERNAL_LINKS.TWITTER}
+                    className="border-border inline-flex items-center gap-2 rounded-full border px-3 py-1.5 transition-opacity hover:opacity-80"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Twitter"
+                  >
+                    <FaXTwitter className="size-4" />X / Twitter
+                  </a>
+                  <a
+                    href={EXTERNAL_LINKS.LINKEDIN}
+                    className="border-border inline-flex items-center gap-2 rounded-full border px-3 py-1.5 transition-opacity hover:opacity-80"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="LinkedIn"
+                  >
+                    <FaLinkedin className="size-4" />
+                    LinkedIn
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <div className="space-y-3 text-sm">
+              <h4 className="text-foreground font-semibold tracking-wide uppercase">
+                Legal
+              </h4>
+              <ul className="space-y-2">
+                <li>
+                  <a
+                    href="/privacy-policy"
+                    className="hover:text-foreground transition-opacity hover:opacity-80"
+                  >
+                    Privacy Policy
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/terms-of-service"
+                    className="hover:text-foreground transition-opacity hover:opacity-80"
+                  >
+                    Terms of Service
+                  </a>
+                </li>
+              </ul>
+            </div>
           </div>
           <div className="bordered-div-padding flex items-center border-t text-[#00A656] md:border-t-0">
             <span
@@ -394,7 +486,7 @@ const Footer = () => {
         </div>
 
         {/* Legal Links Section */}
-        <div className="bordered-div-padding text-muted-foreground flex items-center justify-center space-x-6 border-x border-b text-sm">
+        <div className="bordered-div-padding text-muted-foreground flex flex-wrap items-center justify-center gap-x-4 gap-y-2 border-x border-b text-sm">
           <a
             href="/privacy-policy"
             className="hover:text-foreground transition-opacity hover:opacity-80"

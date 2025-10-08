@@ -3,11 +3,10 @@
 import * as React from 'react';
 
 import {
+  BookOpenCheck,
   Box,
   ChevronDown,
-  Code2,
-  Database,
-  GitBranch,
+  FileText,
   Pencil,
   Terminal,
   Users,
@@ -119,9 +118,30 @@ const navigationItems: NavItem[] = [
   //   { title: 'Roadmap', href: '/roadmap' },
   { title: 'FAQs', href: '/faq' },
   {
-    title: 'Blog',
-    href: 'https://www.linkedin.com/newsletters/the-visibility-report-7365767318414536705/?displayConfirmation=true',
-    target: '_blank',
+    title: 'Resources',
+    subitems: [
+      {
+        title: 'Resources',
+        items: [
+          {
+            title: 'Generative Engine Optimization Guide',
+            href: '/generative-engine-optimization-guide',
+            description:
+              'Curated AEO and GEO playbooks to help your brand win citations in AI answers.',
+            icon: FileText,
+            isHighlighted: true,
+          },
+          {
+            title: 'Blog',
+            href: 'https://www.linkedin.com/newsletters/the-visibility-report-7365767318414536705/?displayConfirmation=true',
+            target: '_blank',
+            description:
+              'Deep dives on GEO, AEO, and AI visibility tactics from the Brantial team.',
+            icon: BookOpenCheck,
+          },
+        ],
+      },
+    ],
   },
   { title: 'Contact', href: '/contact' },
 ];

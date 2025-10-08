@@ -1,0 +1,23 @@
+---
+import { getCollection } from 'astro:content';
+
+import BlogPosts from '@/components/sections/blog-posts';
+import DefaultLayout from '@/layouts/DefaultLayout.astro';
+import { transformBlogPost } from '@/lib/blog';
+
+const posts = (await getCollection('blog'))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .map(transformBlogPost);
+---
+
+<DefaultLayout
+  title="Generative Engine Optimization Guide - Brantial"
+  description="Learn Generative Engine Optimization (GEO) with Brantial—your guide to AEO and AI visibility monitoring in generative search platforms."
+>
+  <BlogPosts
+    blogPosts={posts}
+    heading="Generative Engine Optimization Guide"
+    intro="Learn Generative Engine Optimization (GEO) with Brantial your guide to AEO and AI visibility monitoring in generative search platforms."
+    showTabs={false}
+  />
+</DefaultLayout>

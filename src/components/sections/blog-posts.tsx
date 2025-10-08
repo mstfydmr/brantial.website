@@ -30,8 +30,14 @@ const POSTS_PER_PAGE = 8;
 
 export default function BlogPosts({
   blogPosts,
+  heading = 'Blog',
+  intro,
+  showTabs = true,
 }: {
   blogPosts: BlogPostData[];
+  heading?: string;
+  intro?: string;
+  showTabs?: boolean;
 }) {
   const [activeCategory, setActiveCategory] = useState<Category>('All Posts');
   const [visiblePosts, setVisiblePosts] = useState(POSTS_PER_PAGE);
@@ -80,41 +86,52 @@ export default function BlogPosts({
 
         <div className="bordered-div-padding border-b">
           <h1 className="font-weight-display text-2xl leading-snug tracking-tighter md:text-3xl lg:text-5xl">
-            Blog
+            {heading}
           </h1>
-          <div className="mt-6 block md:hidden">
-            <Select
+          {intro && (
+            <p className="text-muted-foreground mt-4 text-base leading-relaxed md:text-lg">
+              {intro}
+            </p>
+          )}
+          {showTabs && (
+            <div className="mt-6 block md:hidden">
+              <Select
+                value={activeCategory}
+                onValueChange={(value) =>
+                  handleCategoryChange(value as Category)
+                }
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue>{activeCategory}</SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  {categories.map((category) => (
+                    <SelectItem key={category} value={category}>
+                      {category}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+        </div>
+
+        {showTabs && (
+          <div className="bordered-div-padding hidden border-b md:block">
+            <Tabs
               value={activeCategory}
               onValueChange={(value) => handleCategoryChange(value as Category)}
             >
-              <SelectTrigger className="w-full">
-                <SelectValue>{activeCategory}</SelectValue>
-              </SelectTrigger>
-              <SelectContent>
+              <TabsList className="flex gap-3">
                 {categories.map((category) => (
-                  <SelectItem key={category} value={category}>
+                  <TabsTrigger key={category} value={category}>
                     {category}
-                  </SelectItem>
+                  </TabsTrigger>
                 ))}
-              </SelectContent>
-            </Select>
+              </TabsList>
+            </Tabs>
           </div>
-        </div>
-
-        <div className="bordered-div-padding hidden border-b md:block">
-          <Tabs
-            value={activeCategory}
-            onValueChange={(value) => handleCategoryChange(value as Category)}
-          >
-            <TabsList className="flex gap-3">
-              {categories.map((category) => (
-                <TabsTrigger key={category} value={category}>
-                  {category}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
-        </div>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2">
           {visiblePostsList.map((post, index) => {
@@ -133,7 +150,7 @@ export default function BlogPosts({
 
             return (
               <BlogPostItem
-                key={index}
+                key={post.slug}
                 post={post}
                 className={cn({
                   // No bottom border for last row items
@@ -200,7 +217,7 @@ function BlogPostItem({
   const category =
     (post.tags?.find((tag: string) =>
       categories.includes(tag as Category),
-    ) as Category) || 'Product';
+    ) as Category) || 'Guides';
 
   // Format date: Apr 11, 2025
   const formattedDate = new Date(post.date).toLocaleDateString('en-US', {
@@ -229,33 +246,6 @@ function BlogPostItem({
         <p className="text-muted-foreground mt-6 text-sm leading-relaxed md:text-base">
           {post.description}
         </p>
-      </div>
-
-      <div className="mt-6 flex items-center justify-between md:mt-8 lg:mt-10">
-        {post.authors && post.authors.length > 0 && (
-          <div className="flex items-center gap-2">
-            <div className="flex -space-x-3">
-              {post.authors.map(
-                (author: { name: string; image?: string }) =>
-                  author.image && (
-                    <img
-                      key={author.name}
-                      src={author.image}
-                      alt={author.name}
-                      width={32}
-                      height={32}
-                      className="border-background h-8 w-8 rounded-full border-2"
-                    />
-                  ),
-              )}
-            </div>
-            <span className="text-muted-foreground text-sm font-medium">
-              {post.authors
-                .map((author: { name: string }) => author.name)
-                .join(' and ')}
-            </span>
-          </div>
-        )}
       </div>
     </a>
   );

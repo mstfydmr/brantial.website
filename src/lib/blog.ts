@@ -3,6 +3,7 @@ export interface BlogPost {
   id: string;
   body?: string;
   collection: 'blog';
+  slug: string;
   data: {
     title: string;
     description: string;
@@ -38,7 +39,7 @@ export function transformBlogPost(post: BlogPost): BlogPostData {
     title: post.data.title,
     description: post.data.description,
     date: post.data.date,
-    slug: post.id,
+    slug: post.slug ?? post.id,
     tags: post.data.tags,
     authors: post.data.authors || [],
   };

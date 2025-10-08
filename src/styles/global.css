@@ -178,7 +178,7 @@
     @apply bg-background text-foreground font-text font-weight-text tracking-tight;
   }
   table {
-    @apply w-full border-collapse overflow-hidden rounded-lg border border-border text-sm;
+    @apply w-full border-collapse overflow-hidden   text-sm;
   }
 
   thead {
