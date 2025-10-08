@@ -1,3 +1,6 @@
+import { useEffect, useRef } from 'react';
+import mediumZoom, { type Zoom } from 'medium-zoom';
+
 import { cn } from '@/lib/utils';
 
 const features = [
@@ -155,63 +158,99 @@ const features = [
         height: 816,
       },
     ],
-  },
-  {
-    title: 'Filling the Gap in AI Search Visibility',
-    paragraphs: [
-      'AI Search has created a blind spot for brands: we don’t know how, where, or when we appear in generative answers. Traditional analytics can’t capture this, leaving teams without clear visibility.',
-      'Brantial solves this challenge with unique features built for the generative era. Through AEO (Answer Engine Optimization) and advanced artificial intelligence visibility monitoring, the platform delivers a complete picture of brand presence in AI-driven environments. With AI visibility monitoring at its core, Brantial makes the invisible measurable and turns it into a clear path for growth.',
-    ],
+    layout: 'split',
   },
 ];
 
 export function Features2() {
-  return (
-    <section className="container overflow-x-clip">
-      <div className="grid grid-cols-1 border border-t-0 md:grid-cols-2">
-        {features.map((feature, index) => (
-          <div
-            key={index}
-            className={cn(
-              'bordered-div-padding relative space-y-6',
-              index === 0 && 'border-b md:border-e',
-              index === 1 && 'border-b md:border-b-0',
-              index === 3 && 'border-t md:border-s',
-              index === 4 && 'border-t',
-              index === 5 && 'border-t md:border-s',
-            )}
-          >
-            <div className="space-y-4 md:space-y-6">
-              <h3 className="text-foreground font-weight-display leading-snug md:text-xl">
-                {feature.title}
-              </h3>
-              <div className="text-muted-foreground space-y-4 text-sm leading-relaxed md:text-base">
-                {feature.paragraphs.map((paragraph, paragraphIndex) => (
-                  <p key={paragraphIndex} className="whitespace-pre-line">
-                    {paragraph}
-                  </p>
-                ))}
-              </div>
-            </div>
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const zoomRef = useRef<Zoom | null>(null);
 
-            {feature.images && (
-              <div className="flex flex-col gap-4 overflow-hidden mask-b-from-30% mask-b-to-95% md:max-h-[320px]">
-                {feature.images.map(
-                  ({ alt, height, src, width }, imageIndex) => (
-                    <img
-                      key={`${src}-${imageIndex}`}
-                      src={src}
-                      alt={alt}
-                      width={width}
-                      height={height}
-                      className="border-border w-full rounded-xl border object-cover"
-                    />
-                  ),
-                )}
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const images =
+      section.querySelectorAll<HTMLImageElement>('img[data-zoomable]');
+    if (!images.length) return;
+
+    zoomRef.current = mediumZoom(images, {
+      background: 'rgba(15, 23, 42, 0.92)',
+      margin: 24,
+    });
+
+    return () => {
+      if (zoomRef.current) {
+        zoomRef.current.detach();
+        zoomRef.current = null;
+      }
+    };
+  }, []);
+
+  return (
+    <section ref={sectionRef} className="container overflow-x-clip">
+      <div className="grid grid-cols-1 border border-t-0 md:grid-cols-2">
+        {features.map((feature, index) => {
+          const isSplit = feature.layout === 'split';
+
+          return (
+            <div
+              key={index}
+              className={cn(
+                'bordered-div-padding relative space-y-6',
+                index === 0 && 'border-b md:border-e',
+                index === 1 && 'border-b md:border-b-0',
+                index === 3 && 'border-t md:border-s',
+                index === 4 && 'border-t',
+                index === 5 && 'border-t md:border-s',
+                isSplit &&
+                  'md:col-span-2 md:flex md:items-center md:gap-12 md:space-y-0',
+              )}
+            >
+              <div
+                className={cn('space-y-4 md:space-y-6', isSplit && 'md:w-1/2')}
+              >
+                <h3 className="text-foreground font-weight-display leading-snug md:text-xl">
+                  {feature.title}
+                </h3>
+                <div className="text-muted-foreground space-y-4 text-sm leading-relaxed md:text-base">
+                  {feature.paragraphs.map((paragraph, paragraphIndex) => (
+                    <p key={paragraphIndex} className="whitespace-pre-line">
+                      {paragraph}
+                    </p>
+                  ))}
+                </div>
               </div>
-            )}
-          </div>
-        ))}
+
+              {feature.images && (
+                <div
+                  className={cn(
+                    'flex flex-col gap-4 overflow-hidden mask-b-from-30% mask-b-to-95% md:max-h-[320px]',
+                    isSplit && 'md:max-h-none md:w-1/2 md:items-end md:pl-10',
+                  )}
+                >
+                  {feature.images.map(
+                    ({ alt, height, src, width }, imageIndex) => (
+                      <img
+                        key={`${src}-${imageIndex}`}
+                        src={src}
+                        alt={alt}
+                        width={width}
+                        height={height}
+                        loading="lazy"
+                        data-zoomable
+                        className={cn(
+                          'border-border w-full rounded-xl border object-cover',
+                          isSplit && 'md:w-auto md:max-w-[420px]',
+                        )}
+                      />
+                    ),
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </section>
   );

@@ -36,6 +36,7 @@
     "embla-carousel-autoplay": "^8.5.2",
     "embla-carousel-react": "^8.5.2",
     "lucide-react": "^0.510.0",
+    "medium-zoom": "^1.1.0",
     "motion": "^12.10.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

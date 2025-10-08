@@ -6,6 +6,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 import { Compatibility } from '@/components/sections/compatibility';
 import { Features } from '@/components/sections/features';
 import { Features2 } from '@/components/sections/features2';
+import { AIVisibilityGap } from '@/components/sections/ai-visibility-gap';
 import { Hero } from '@/components/sections/hero';
 import { Testimonials } from '@/components/sections/testimonials';
 import { HomeFAQSection } from '@/components/sections/home-faq';
@@ -21,6 +22,7 @@ import DefaultLayout from '@/layouts/DefaultLayout.astro';
   <Features client:load />
   <Testimonials client:load />
   <Features2 client:load />
+  <AIVisibilityGap client:load />
   <Comparison client:load />
   <HomeFAQSection client:load />
 </DefaultLayout>
