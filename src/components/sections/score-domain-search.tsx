@@ -10,6 +10,43 @@ import { cn } from '@/lib/utils';
 
 const api = 'https://app.brantial.ai/api/report/get';
 
+type ApiResponse = {
+  project: {
+    id: number;
+    name: string;
+    domain: string;
+    country: string | null;
+    analyzed_at: string;
+    metrics: Record<string, number | null>;
+  };
+  scores?: {
+    ai_authority_score: number | null;
+    visibility: number | null;
+    sentiment: number | null;
+  };
+  competitors: Array<{
+    id: number;
+    name: string;
+    domain: string;
+    self: boolean;
+    logo_url: string;
+    visibility_percent: number;
+    answer_count: number;
+    avg_position: number | null;
+    avg_sentiment: number | null;
+  }>;
+  prompts: Array<{
+    id: number;
+    prompt: string;
+    country: string | null;
+    answers_total: number;
+    answers_analyzed: number;
+    answers: Array<unknown>;
+    source: string;
+  }>;
+  status: 'started' | 'pending' | 'done';
+};
+
 function getSentimentTone(value: number): string {
   if (value >= 66) return 'text-emerald-600 dark:text-emerald-400';
   if (value >= 40) return 'text-foreground';
@@ -129,10 +166,10 @@ export function ScoreDomainSearch() {
       <div className="bordered-div-padding bg-card/40 border-x border-t">
         <form
           id={formId}
-          className="border-border/60 dark:bg-background/70 flex flex-col gap-6 rounded-lg border bg-slate-100 p-6 backdrop-blur-md md:flex-row md:items-center md:gap-8 md:p-8"
+          className="border-border/60 dark:bg-background/70 flex flex-col gap-4 rounded-lg border bg-slate-100 p-4 backdrop-blur-md sm:gap-6 sm:p-6 md:flex-row md:items-center md:gap-8 md:p-8"
           onSubmit={handleSubmit}
         >
-          <div className="flex-1 space-y-3">
+          <div className="w-full flex-1 space-y-3">
             <div className="relative flex items-center">
               <Input
                 id={`${formId}-domain`}
@@ -173,7 +210,9 @@ export function ScoreDomainSearch() {
             We&apos;re still analyzing your domain. This might take a minute.
           </p>
         )}
-        {report && <ReportPanels data={report} className="mt-10" />}
+        {report?.status === 'done' && (
+          <ReportPanels data={report} className="mt-10" />
+        )}
       </div>
     </section>
   );
@@ -191,143 +230,145 @@ function ReportPanels({
   return (
     <div className={className}>
       <div className="border-border/60 bg-background/60 grid gap-6 rounded-xl border p-6">
-        <header className="flex flex-wrap items-center justify-between gap-4">
+        <header className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-1">
-            <h2 className="font-weight-display text-xl tracking-tight">
+            <h2 className="font-weight-display text-lg tracking-tight sm:text-xl">
               Project Overview
             </h2>
             <p className="text-muted-foreground text-sm">
-              Key health indicators for {project.name}
+              Latest visibility snapshot for {project.domain}
             </p>
           </div>
         </header>
 
-        <div className="grid gap-4 md:grid-cols-3">
-          <div className="bg-card/60 border-border/60 flex flex-col justify-between rounded-lg border px-4 py-3">
+        <div className="grid gap-3 sm:grid-cols-3 sm:gap-4">
+          <div className="bg-card/60 border-border/60 flex flex-col justify-between rounded-lg border px-4 py-3 sm:py-4">
             <span className="text-muted-foreground text-xs tracking-[0.2em] uppercase">
               AI Authority Score
             </span>
             <span className="font-weight-display text-3xl">
-              {toPercent(data.scores?.ai_authority_score ?? null)}
+              {toPercent(project.metrics.ai_authority_score ?? null)}
             </span>
           </div>
-          <div className="bg-card/60 border-border/60 flex flex-col justify-between rounded-lg border px-4 py-3">
+          <div className="bg-card/60 border-border/60 flex flex-col justify-between rounded-lg border px-4 py-3 sm:py-4">
             <span className="text-muted-foreground text-xs tracking-[0.2em] uppercase">
               Visibility
             </span>
             <span className="font-weight-display text-3xl">
-              {toPercent(data.scores?.visibility ?? null)}
+              {toPercent(project.metrics.visibility ?? null)}
             </span>
           </div>
-          <div className="bg-card/60 border-border/60 flex flex-col justify-between rounded-lg border px-4 py-3">
+          <div className="bg-card/60 border-border/60 flex flex-col justify-between rounded-lg border px-4 py-3 sm:py-4">
             <span className="text-muted-foreground text-xs tracking-[0.2em] uppercase">
               Sentiment
             </span>
             <span className={cn('font-weight-display text-3xl')}>
-              {toPercent(data.scores?.sentiment ?? null)}
+              {toPercent(project.metrics.sentiment ?? null)}
             </span>
           </div>
         </div>
       </div>
 
       <section className="mt-8 space-y-4">
-        <header className="flex items-center justify-between">
+        <header className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <h3 className="font-weight-display text-lg">Competitive Landscape</h3>
           <span className="text-muted-foreground text-sm">
             Top {competitors.length} tracked competitors
           </span>
         </header>
         <div className="border-border/60 overflow-hidden rounded-xl border">
-          <table className="min-w-full border-collapse text-sm">
-            <thead className="border-border/60 bg-card/40 text-muted-foreground border-b">
-              <tr>
-                <th className="px-4 py-3 text-left">Competitor</th>
-                <th className="px-4 py-3 text-left">Visibility %</th>
-                <th className="px-4 py-3 text-left">Answers</th>
-                <th className="px-4 py-3 text-left">Avg. Position</th>
-                <th className="px-4 py-3 text-left">Sentiment</th>
-              </tr>
-            </thead>
-            <tbody className="bg-card/20 [&>tr]:border-border/60 [&>tr+tr]:border-t">
-              {competitors.map((competitor) => (
-                <tr
-                  key={competitor.id}
-                  className="bg-background dark:bg-background/80 transition-colors"
-                >
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-3">
-                      <div className="bg-muted size-9 overflow-hidden rounded-md">
-                        <img
-                          src={competitor.logo_url}
-                          alt={`${competitor.name} logo`}
-                          className="size-full object-cover"
-                          loading="lazy"
-                        />
-                      </div>
-                      <div>
-                        <div className="font-medium">
-                          {competitor.name}
-                          {competitor.self && (
-                            <span className="text-primary/80 border-primary/30 ml-2 rounded-full border px-2 py-0.5 text-[11px] font-medium">
-                              It's you
-                            </span>
-                          )}
+          <div className="overflow-x-auto">
+            <table className="min-w-full border-collapse text-sm">
+              <thead className="border-border/60 bg-card/40 text-muted-foreground border-b">
+                <tr>
+                  <th className="px-3 py-3 text-left sm:px-4">Competitor</th>
+                  <th className="px-3 py-3 text-left sm:px-4">Visibility %</th>
+                  <th className="px-3 py-3 text-left sm:px-4">Answers</th>
+                  <th className="px-3 py-3 text-left sm:px-4">Avg. Position</th>
+                  <th className="px-3 py-3 text-left sm:px-4">Sentiment</th>
+                </tr>
+              </thead>
+              <tbody className="bg-card/20 [&>tr]:border-border/60 [&>tr+tr]:border-t">
+                {competitors.map((competitor) => (
+                  <tr
+                    key={competitor.id}
+                    className="bg-background dark:bg-background/80 transition-colors"
+                  >
+                    <td className="px-3 py-3 sm:px-4">
+                      <div className="flex items-center gap-3">
+                        <div className="bg-muted size-9 overflow-hidden rounded-md">
+                          <img
+                            src={competitor.logo_url}
+                            alt={`${competitor.name} logo`}
+                            className="size-full object-cover"
+                            loading="lazy"
+                          />
                         </div>
-                        <div className="text-muted-foreground text-xs">
-                          {competitor.domain}
+                        <div className="min-w-0">
+                          <div className="flex flex-wrap items-center gap-2 text-sm font-medium">
+                            <span className="truncate">{competitor.name}</span>
+                            {competitor.self && (
+                              <span className="text-primary/80 border-primary/30 inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-medium">
+                                It's you
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-muted-foreground truncate text-xs">
+                            {competitor.domain}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3">
-                    <span
-                      className={cn(
-                        'font-medium',
-                        competitor.visibility_percent === 0
-                          ? 'text-muted-foreground'
-                          : 'text-foreground',
-                      )}
-                    >
-                      {competitor.visibility_percent.toFixed(2)}%
-                    </span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <span
-                      className={cn(
-                        competitor.answer_count === 0
-                          ? 'text-muted-foreground'
-                          : 'text-foreground',
-                      )}
-                    >
-                      {competitor.answer_count}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3">
-                    {competitor.avg_position ?? '—'}
-                  </td>
-                  <td className="px-4 py-3">
-                    {typeof competitor.avg_sentiment === 'number' ? (
+                    </td>
+                    <td className="px-3 py-3 sm:px-4">
                       <span
                         className={cn(
                           'font-medium',
-                          getSentimentTone(competitor.avg_sentiment),
+                          competitor.visibility_percent === 0
+                            ? 'text-muted-foreground'
+                            : 'text-foreground',
                         )}
                       >
-                        {competitor.avg_sentiment.toFixed(0)}%
+                        {competitor.visibility_percent.toFixed(2)}%
                       </span>
-                    ) : (
-                      '—'
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                    </td>
+                    <td className="px-3 py-3 sm:px-4">
+                      <span
+                        className={cn(
+                          competitor.answer_count === 0
+                            ? 'text-muted-foreground'
+                            : 'text-foreground',
+                        )}
+                      >
+                        {competitor.answer_count}
+                      </span>
+                    </td>
+                    <td className="px-3 py-3 sm:px-4">
+                      {competitor.avg_position ?? '—'}
+                    </td>
+                    <td className="px-3 py-3 sm:px-4">
+                      {typeof competitor.avg_sentiment === 'number' ? (
+                        <span
+                          className={cn(
+                            'font-medium',
+                            getSentimentTone(competitor.avg_sentiment),
+                          )}
+                        >
+                          {competitor.avg_sentiment.toFixed(0)}%
+                        </span>
+                      ) : (
+                        '—'
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </section>
 
       <section className="mt-8 space-y-4">
-        <header className="flex items-center justify-between">
+        <header className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <h3 className="font-weight-display text-lg">Prompts Monitored</h3>
           <span className="text-muted-foreground text-sm">
             {prompts.length} prompts tracked
@@ -336,13 +377,20 @@ function ReportPanels({
         <div className="border-border/60 rounded-xl border">
           <ul className="divide-border/70 divide-y">
             {prompts.map((prompt) => (
-              <li key={prompt.id} className="bg-background/40 px-5 py-4">
-                <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+              <li
+                key={prompt.id}
+                className="bg-background/40 px-4 py-4 sm:px-5"
+              >
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                   <div className="space-y-1">
                     <p className="font-medium">{prompt.prompt}</p>
+                    <span className="text-muted-foreground text-xs tracking-[0.2em] uppercase">
+                      Source: {prompt.source}
+                    </span>
                   </div>
                   <div className="text-muted-foreground text-sm">
-                    {prompt.answers_total} answers
+                    {prompt.answers_total} answers · {prompt.answers_analyzed}{' '}
+                    analyzed
                   </div>
                 </div>
               </li>

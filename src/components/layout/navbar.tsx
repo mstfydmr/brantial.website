@@ -115,6 +115,7 @@ const navigationItems: NavItem[] = [
   //   },
   { title: 'Pricing', href: '#pricing' },
   { title: 'AI Authority Index', href: '/ai-authority-index' },
+  { title: 'Brand Score', href: '/brandscore' },
   //   { title: 'Roadmap', href: '/roadmap' },
   { title: 'FAQs', href: '/faq' },
   {
