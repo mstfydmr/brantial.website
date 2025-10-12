@@ -157,7 +157,7 @@ export function ScoreDomainSearch() {
           clearInterval(interval);
           reject(error);
         }
-      }, 5000);
+      }, 10000);
     });
   }
 
