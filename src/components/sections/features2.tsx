@@ -26,7 +26,7 @@ const features = [
     ],
     images: [
       {
-        src: '/images/landing/ai-visibility-analysis.png',
+        src: '/images/landing/ai-visibility-analysis.webp',
         alt: 'AI visibility analysis dashboard',
         width: 1983,
         height: 816,
@@ -53,7 +53,7 @@ const features = [
     ],
     images: [
       {
-        src: '/images/landing/ai-keyword-volume.png',
+        src: '/images/landing/ai-keyword-volume.webp',
         alt: 'AI keyword volume insights dashboard',
         width: 1441,
         height: 816,
@@ -91,13 +91,13 @@ const features = [
     ],
     images: [
       {
-        src: '/images/landing/workflow agent1 .png',
+        src: '/images/landing/workflowagent1.webp',
         alt: 'Workflow agent content intake screen',
         width: 1680,
         height: 816,
       },
       {
-        src: '/images/landing/workflow agent2.png',
+        src: '/images/landing/workflowagent2.webp',
         alt: 'Workflow agent improvement output screen',
         width: 1680,
         height: 816,
@@ -126,7 +126,7 @@ const features = [
     ],
     images: [
       {
-        src: '/images/landing/google-search-console.png',
+        src: '/images/landing/google-search-console.webp',
         alt: 'Google Search Console integration dashboard',
         width: 1944,
         height: 816,
@@ -152,7 +152,7 @@ const features = [
     ],
     images: [
       {
-        src: '/images/landing/action-center.png',
+        src: '/images/landing/action-center.webp',
         alt: 'Action center prioritized task list interface',
         width: 1680,
         height: 816,

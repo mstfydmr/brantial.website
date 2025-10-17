@@ -38,14 +38,14 @@ export function Hero() {
       <div className="container">
         <div className="bordered-div-padding flex items-center justify-center border">
           <img
-            src="/images/landing/hero-light.png"
+            src="/images/landing/hero-light.webp"
             alt="Hero Image"
             width={1320}
             height={743}
             className="rounded-lg border mask-b-from-50% mask-b-to-90% dark:hidden"
           />
           <img
-            src="/images/landing/hero-dark.png"
+            src="/images/landing/hero-dark.webp"
             alt="Hero Image"
             width={1320}
             height={743}

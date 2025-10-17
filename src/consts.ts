@@ -36,7 +36,7 @@ export const SITE_METADATA = {
     siteName: 'Scalar',
     images: [
       {
-        url: '/images/landing/hero-light.png',
+        url: '/images/landing/hero-light.webp',
         width: 1200,
         height: 630,
         alt: 'Brantial',
@@ -47,7 +47,7 @@ export const SITE_METADATA = {
     card: 'summary_large_image',
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
-    images: ['/images/landing/hero-light.png'],
+    images: ['/images/landing/hero-light.webp'],
     creator: '@scalar',
   },
 };
